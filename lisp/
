@@ -1,0 +1,49 @@
+:PROPERTIES:
+:DESCRIPTION: Guix and Emacs configurations as well as custom scripts
+:END:
+#+TITLE: Dotfiles
+* Goal
+:PROPERTIES:
+:SUMMARY:  Stable north star: what this project is and the conditions under which it is considered done. Unlike Status, this rarely changes.
+:END:
+* Status
+:PROPERTIES:
+:SUMMARY:  Current project state: what you were working on, what is partially done, and the mental context needed to resume.
+:END:
+Cleanup perfidy config file, exaltation config file, init.el
+* Next actions
+:PROPERTIES:
+:SUMMARY:  Concrete executable tasks. These should be specific enough that you can start without rethinking the project.
+:END:
+** TODO Create a template of this PROJECT.org to kickstart new projects
+** TODO Try to add my upcoming tasks (via todoman = executable todo) and maybe events for the week or something like that (via khal?)
+todo --config /home/nic/tmp/todoman.py show 73
+** TODO perfidy: put home-environment in its own file
+** TODO Makefile: Create a target to build system generation without sudo (no reconfigure, only build)
+** TODO Makefile: Create a target to reconfigure home environment
+** TODO awesome-tray: Don't show stuff unless required (disk above 90%, cpu above 30%, wireless weak or disconnected). Always show battery
+** TODO gptel: Use codex oauth
+** TODO Cleanup init.el
+*** TODO Theme: toggle between modus-vivendi / modus-operandi
+*** TODO Rewrite exwm for use-package
+** TODO exaltation: fix immich
+** TODO exaltation: tandoor application for recipes
+** TODO emacs knockknock for notifications ?
+* Open questions
+:PROPERTIES:
+:SUMMARY:  Unresolved uncertainties and things to research. Distinct from Next actions (executable) and Decisions (settled). Promote these to Decisions once resolved.
+:END:
+** Should I keep timers on perfidy ? Or just run the service once and assume I'll turn off the laptop regularly ?
+* Decisions
+:PROPERTIES:
+:SUMMARY:  Choices already made, especially ones you do not want to revisit repeatedly. Example: “Use Org as canonical project state.”
+:END:
+* Log
+:PROPERTIES:
+:SUMMARY:  Chronological record of work sessions, discoveries, blockers, and changes. Useful for reconstructing why the project is where it is.
+:END:
+** =project-known-project-roots= already returns roots in most-recently-used order (it reads from =project--list=, which =project-remember-project= pushes onto the front). So your dashboard is /already/ roughly ordered by recency.
+* References
+:PROPERTIES:
+:SUMMARY:  Related files, documentation, external resources, and links needed to work on the project.
+:END:

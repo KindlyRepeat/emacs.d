@@ -1,0 +1,38 @@
+:PROPERTIES:
+:DESCRIPTION:
+:END:
+#+TITLE:
+* Goal
+:PROPERTIES:
+:SUMMARY:  Stable north star: what this project is and the conditions under which it is considered done. Unlike Status, this rarely changes.
+:END:
+
+* Status
+:PROPERTIES:
+:SUMMARY:  Current project state: what you were working on, what is partially done, and the mental context needed to resume.
+:END:
+
+* Next actions
+:PROPERTIES:
+:SUMMARY:  Concrete executable tasks. These should be specific enough that you can start without rethinking the project.
+:END:
+
+* Open questions
+:PROPERTIES:
+:SUMMARY:  Unresolved uncertainties and things to research. Distinct from Next actions (executable) and Decisions (settled). Promote these to Decisions once resolved.
+:END:
+
+* Decisions
+:PROPERTIES:
+:SUMMARY:  Choices already made, especially ones you do not want to revisit repeatedly. Example: “Use Org as canonical project state.”
+:END:
+
+* Log
+:PROPERTIES:
+:SUMMARY:  Chronological record of work sessions, discoveries, blockers, and changes. Useful for reconstructing why the project is where it is.
+:END:
+
+* References
+:PROPERTIES:
+:SUMMARY:  Related files, documentation, external resources, and links needed to work on the project.
+:END:

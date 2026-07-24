@@ -125,6 +125,13 @@
   (setq desktop-restore-frames t)
   (desktop-save-mode 1))
 
+(use-package ediff-diff
+  :custom
+  (ediff-diff-options "-w")
+  (ediff-split-window-function 'split-window-horizontally)
+  ;; Don't let ediff break EXWM, keep it in one frame
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
 ;; Its enabled by default.
 (use-package eldoc
   :init

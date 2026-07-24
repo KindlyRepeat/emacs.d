@@ -16,7 +16,6 @@
 :PROPERTIES:
 :SUMMARY:  Concrete executable tasks. These should be specific enough that you can start without rethinking the project.
 :END:
-** TODO Rewrite exwm for use-package
 ** TODO emacs knockknock for notifications ?
 agent-shell could use theme using agent-shell-knockknock (already packaged in my dotfiles) or agent-shell-notifications
 ** WAITING Enable ts modes (especially markdown-ts-mode) (waiting for reconfigure)

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (define-skeleton sh-skeleton
   "A skeleton for bash scripts"
   "Description: "

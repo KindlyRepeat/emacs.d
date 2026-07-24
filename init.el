@@ -1,4 +1,4 @@
-;;; init_new.el ---
+;; -*- lexical-binding: t; -*-
 ;; Credentials
 
 ;;; Commentary:
@@ -12,10 +12,11 @@
       user-full-name "Nicolas Odermatt-Lemay")
 
 ;; My emacs configuration directory
-(defvar od/emacs-directory (concat (getenv "HOME") "/.config/emacs"))
+(defvar od/emacs-directory (expand-file-name "~/.emacs.d"))
 
 ;; My Emacs Lisp configuration directory
-(add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
+  (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
+  ;; (add-to-list 'load-path (expand-file-name "lisp/" od/emacs-directory))
 
 ;; My Nextcloud directory
 (defvar od/nextcloud-directory (concat (getenv "HOME") "/nc"))
@@ -88,7 +89,6 @@
   (require 'safe-variables)		; Because init.el is read-only, I can't save to it interactively
   (require 'init-default)		; Packages included in Emacs by default
   (require 'init-completion)		; Consult, Embark, Marginalia, Vertico
-  (require 'init-ui)
   (require 'init-dired)
   (require 'init-misc)
   (require 'init-window)
@@ -100,6 +100,7 @@
   (require 'init-llm)
   (when od/exwm-enabled
     (require 'init-exwm))
+  (require 'init-ui)			; Needs to be loaded after init-exwm because of `(nol/set-xsettings-theme)'
   (require 'init-dashboard)
   (run-with-idle-timer (* 2 60 60) t '(lambda () (delete-other-windows) (my/dashboard)))
   :custom

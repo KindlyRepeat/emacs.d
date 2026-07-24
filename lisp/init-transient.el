@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package transient
   :bind
   (("C-x ?" . od/top-level-transient)

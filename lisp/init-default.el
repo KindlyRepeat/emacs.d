@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package auth-source
   :config
   (setq auth-sources '("~/.authinfo.gpg")))
@@ -418,14 +420,14 @@ No argument inserts a pair of quotes and leaves point between them."
     (interactive)
     (compile (format "guix build -L ~/dotfiles -L ~/dotfiles/guix-dotfiles/packages/patches --no-offload --keep-failed --file=%s" (buffer-file-name)) t)))
 
-(use-package scroll-bar
-  :init
-  (defun od/set-horizontal-scroll-bar ()
-    (modify-all-frames-parameters '((horizontal-scroll-bars . t)
-				    (scroll-bar-height . 4))))
-  ;; What a mess, but I can't make it work otherwise.
-  (add-hook 'emacs-startup-hook
-	    '(lambda () (run-with-timer 1 nil 'od/set-horizontal-scroll-bar))))
+;; (use-package scroll-bar
+;;   :init
+;;   (defun od/set-horizontal-scroll-bar ()
+;;     (modify-all-frames-parameters '((horizontal-scroll-bars . t)
+;; 				    (scroll-bar-height . 4))))
+;;   ;; What a mess, but I can't make it work otherwise.
+;;   (add-hook 'emacs-startup-hook
+;; 	    '(lambda () (run-with-timer 1 nil 'od/set-horizontal-scroll-bar))))
 
 (use-package sendmail
   :config
@@ -546,6 +548,8 @@ Add this function to appropriate major mode hooks such as
   (advice-add #'project-remember-project :filter-args #'od/project-filter-remote-projects))
 
 (use-package tab-bar
+  :custom
+  (tab-bar-show 1)
   :config
   (defun od/tab-bar-tab-name-format-default (tab i)
     "Center the tab name and add spaces if it is shorter than 15 characters."

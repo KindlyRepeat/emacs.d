@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;; init-window.el --- Window management configuration
 
 ;;; Commentary: It might be useful to take a look at `split-window-sensibly' and `window-splittable-p'

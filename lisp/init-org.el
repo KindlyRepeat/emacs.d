@@ -1,5 +1,4 @@
-;; (straight-use-package 'org)
-					; Make sure to use the `org' from straight to avoid mismatch
+;; -*- lexical-binding: t; -*-
 
 (use-package ob-clojure
   :disabled t

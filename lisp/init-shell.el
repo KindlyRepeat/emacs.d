@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package eat
   :disabled t
   :hook ((eshell-load . eat-eshell-mode)

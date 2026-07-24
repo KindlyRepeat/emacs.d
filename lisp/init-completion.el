@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package consult
   :demand t
   :bind
@@ -421,6 +423,7 @@ This means that \"a\" would match \"a\", \"à\" and \"â\".")
   (vertico-mouse-mode))
 
 (use-package vertico-multiform
+  :disabled t
   :demand t
   :after vertico
   :config

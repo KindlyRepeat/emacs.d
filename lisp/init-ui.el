@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;; init-ui.el --- UI-related configuration
 
 ;;; Commentary:
@@ -5,9 +7,96 @@
 
 ;;; Code:
 
+(set-face-attribute 'default nil :family "FiraCode Nerd Font Mono" :height 110)
+;; (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font Mono" :height 110)
+(set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font Mono" :height 110)
+(set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 115)
+
+;; Lighter font weight in minibuffer
+;; (dolist (buffer (list " *Minibuf-0*" " *Minibuf-1*" ))
+;;   (when (get-buffer buffer)
+;;     (with-current-buffer buffer
+;;       (face-remap-add-relative 'bold :weight 'normal)
+;;       (face-remap-add-relative 'default :weight 'light))))
+
+;; (add-hook 'minibuffer-setup-hook
+;;           '(lambda()
+;;              (face-remap-add-relative 'bold :weight 'normal)
+;;              (face-remap-add-relative 'default :weight 'light)))
+
+;; Keep this package first as it load a modus themes and enable the use of
+;; `modus-themes-with-colors' macro.
+(use-package circadian
+  :demand t
+  :custom
+  (circadian-verbose t)
+  (circadian-themes '((:sunrise . modus-operandi)
+		      (:sunset . modus-vivendi)))
+  :config
+  (when od/exwm-enabled
+    (setq circadian-after-load-theme-hook '(nol/set-xsettings-theme)))
+
+  (circadian-setup))
+
+;; Do not use-package as its a theme, not a package !
+(require-theme 'modus-themes)
+
+(setopt modus-themes-bold-constructs t)
+(setopt modus-themes-italic-constructs t)
+(setopt modus-themes-mixed-fonts t)
+
+;; (modus-themes-with-colors
+;;   (custom-set-faces
+;;    `(mode-line-buffer-id ((,c :foreground "#000000")))))
+
+(setq modus-themes-common-palette-overrides
+      `(
+        ;; From the section "Make the mode line borderless"
+        (border-mode-line-active unspecified)
+        (border-mode-line-inactive unspecified)
+	;; Make it closer to the background color
+	(bg-mode-line-active bg-inactive)
+	(bg-mode-line-inactive bg-dim)
+	;; Colorful background for active tab
+	(bg-tab-bar bg-inactive)
+        (bg-tab-current bg-cyan-subtle)
+        (bg-tab-other bg-dim)))
+
+;; Do not set a background color as moody-tab will overwrite it.
+(defface nol/mode-line-selected-buffer-id
+  '((t :inherit bold))
+  "Face for the buffer id in the selected window's mode line.")
+
+(defun nol/set-modus-mode-line-faces ()
+  (modus-themes-with-colors
+    (custom-theme-set-faces
+     'user
+     `(nol/mode-line-selected-buffer-id
+       ((t (:inherit bold :foreground ,accent-0)))))))
+
+(add-hook 'modus-themes-after-load-theme-hook #'nol/set-modus-mode-line-faces)
+(nol/set-modus-mode-line-faces)
+
+(defun nol/propertized-buffer-identification (fmt)
+  "Like `propertized-buffer-identification', but use a special face in the selected window."
+  (list
+   (propertize fmt
+               'face (if (mode-line-window-selected-p)
+                         'nol/mode-line-selected-buffer-id
+                       'mode-line-buffer-id)
+               'help-echo
+               (purecopy "Buffer name
+mouse-1: Previous buffer
+mouse-3: Next buffer")
+               'mouse-face 'mode-line-highlight
+               'local-map mode-line-buffer-identification-keymap)))
+
+(setq-default mode-line-buffer-identification
+              '(:eval (nol/propertized-buffer-identification "%12b")))
+
 ;; Set configuration per machine and fix some faces because `base16-theme.el' does a poor job.
 ;; TODO: Set per machine with a fallback that would work on any machine
-
+;; TODO: Rewrite with modus-themes-with-colors
 (defun nol/custom-set-faces ()
     (custom-theme-set-faces
      'user
@@ -607,15 +696,16 @@ might need to be put in cache using the command `gtk-update-icon-cache -f
 
 (use-package moody
   :demand t
-  :hook ((post-command . nol/record-selected-window)
+  :hook (;; (post-command . nol/record-selected-window)
 	 (buffer-list-update . nol/update-all))
   :init
   ;; Track the current window to control the colors of moody-mode-line-buffer-identification.
-  (defvar nol/selected-window nil)
+  ;; (defvar nol/selected-window nil)
 
-  (defun nol/record-selected-window ()
-    (setq nol/selected-window (selected-window)))
+  ;; (defun nol/record-selected-window ()
+  ;;   (setq nol/selected-window (selected-window)))
 
+  ;; Not sure if still necessary
   (defun nol/update-all ()
     (force-mode-line-update t))
 
@@ -642,17 +732,21 @@ might need to be put in cache using the command `gtk-update-icon-cache -f
   ;; 	     (final-width (+ desired-width padding)))
   ;; 	(s-center final-width buf-name))))
 
-  (defun nol/propertized-buffer-identification (fmt)
-    "Same as `propertized-buffer-identification' but pick the face according to `nol/selected-window'."
-    (list (propertize fmt
-		      'face (if (eq nol/selected-window (selected-window)) 'mode-line-buffer-id 'fixed-pitch)
-		      'help-echo
-		      (purecopy "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer")
-		      'mouse-face 'mode-line-highlight
-		      'local-map mode-line-buffer-identification-keymap)))
+  ;; (defun nol/propertized-buffer-identification (fmt)
+;;     "Same as `propertized-buffer-identification' but pick the face according to `nol/selected-window'."
+;;     (list (propertize fmt
+;; 		      'face (if (eq nol/selected-window (selected-window)) 'mode-line-buffer-id 'fixed-pitch)
+;; 		      'help-echo
+;; 		      (purecopy "Buffer name
+;; mouse-1: Previous buffer\nmouse-3: Next buffer")
+;; 		      'mouse-face 'mode-line-highlight
+;; 		      'local-map mode-line-buffer-identification-keymap)))
 
   :config
+  (setq-default moody-mode-line-buffer-identification
+                '( :eval (moody-tab (car (nol/propertized-buffer-identification "%b"))
+				    20 'down)))
+
   (defun nol/moody-mode-line-height ()
     (+ 3 (frame-char-height)))
 
@@ -688,6 +782,26 @@ mouse-1: Previous buffer\nmouse-3: Next buffer")
 (use-package nerd-icons-completion
   :unless (string= (tty-type) "linux")	; Those icons can't be displayed on TTYs.
   :demand t
+  :custom
+  ;; Having the same icon for all items is useless. Though it is useful for buffer
+  ;; selection. Use `nf-cod-blank' to have the same alignment between buffer
+  ;; selection and the other categories.
+  (nerd-icons-completion-category-icons
+   '((command nerd-icons-codicon "nf-cod-blank" nerd-icons-blue)
+     (theme nerd-icons-codicon "nf-cod-blank" nerd-icons-yellow)
+     (symbol nerd-icons-codicon "nf-cod-blank" nerd-icons-dblue)
+     (variable nerd-icons-codicon "nf-cod-blank" nerd-icons-lpurple)
+     (function nerd-icons-codicon "nf-cod-blank" nerd-icons-blue)
+     (package nerd-icons-codicon "nf-cod-blank" nerd-icons-orange)
+     (symbol-help nerd-icons-codicon "nf-cod-blank" nerd-icons-lpurple)
+     (face nerd-icons-codicon "nf-cod-blank" nerd-icons-pink)
+     (input-method nerd-icons-codicon "nf-cod-blank" nerd-icons-blue-alt)
+     (org-roam-node nerd-icons-codicon "nf-cod-blank" nerd-icons-silver)
+     (imenu nerd-icons-codicon "nf-cod-blank" nerd-icons-lblue)
+     (kill-ring nerd-icons-codicon "nf-cod-blank" nerd-icons-silver)
+     (coding-system nerd-icons-codicon "nf-cod-blank" nerd-icons-lpurple)
+     (library nerd-icons-codicon "nf-cod-blank" nerd-icons-lpurple)
+     (nil nerd-icons-codicon "nf-cod-blank" nerd-icons-silver)))
   :config
   (nerd-icons-completion-mode))
 

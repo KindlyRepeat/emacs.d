@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun od/get-sunrise-time (&optional hour-or-min)
   "Return the time of sunrise for the day in 24-hours form. Optionnaly return the hour or the minute only, as
 an integer"

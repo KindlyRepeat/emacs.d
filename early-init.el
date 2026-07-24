@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defconst emacs-start-time (current-time))
 
 (setq message-log-max 16384)
@@ -28,6 +30,7 @@
 (setq initial-frame-alist '((internal-border-width . 12) ;; left of line number, bottom of echo area and top of screen
 			    (bottom-divider-width . 1)
 			    (vertical-scroll-bars . nil)
+			    (horizontal-scroll-bars . nil)
 			    (tool-bar-lines . 0)
 			    (menu-bar-lines . 0)
 			    (left-fringe . 4)

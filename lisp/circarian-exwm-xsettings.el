@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; When modifying those lists, re-evaluate `circadian-themes' and
 ;; run (circadian-setup).
 (setq allowed-base16-light-themes '(base16-atelier-cave-light
@@ -47,6 +49,8 @@
 ;; Xft/RGBA              "rgb"
 
 (require 'exwm-xsettings)
+(require 'seq)
+(require 'subr-x)
 
 (setq exwm-xsettings `(("Gtk/DecorationLayout" . "menu:close")
 		       ("Gtk/FontName" . "Atkinson Hyperlegible")
@@ -67,10 +71,43 @@
 ;;(setopt exwm-xsettings-theme "base16-atelier-cave-light")
 ;;(setopt exwm-xsettings-theme "base16-atelier-cave")
 
+(defun nol/xsettings-theme-directories ()
+  "Return standard GTK theme directories."
+  (let* ((xdg-data-home (or (getenv "XDG_DATA_HOME")
+			    (expand-file-name "~/.local/share")))
+	 (xdg-data-dirs (split-string (or (getenv "XDG_DATA_DIRS")
+					  "/usr/local/share:/usr/share")
+				      path-separator t)))
+    (delete-dups
+     (mapcar #'directory-file-name
+	     (append (list (expand-file-name "themes" xdg-data-home)
+			   (expand-file-name "~/.themes"))
+		     (mapcar (lambda (dir)
+			       (expand-file-name "themes" dir))
+			     xdg-data-dirs))))))
+
+(defun nol/xsettings-theme-exists-p (theme)
+  "Return non-nil if THEME exists in a standard GTK theme directory.
+Also accept a matching THEME-Dark directory."
+  (let* ((theme-name (if (symbolp theme) (symbol-name theme) theme))
+	 (theme-names (list theme-name (concat theme-name "-Dark"))))
+    (seq-some (lambda (dir)
+		(seq-some (lambda (theme-name)
+			    (file-directory-p (expand-file-name theme-name dir)))
+			  theme-names))
+	      (nol/xsettings-theme-directories))))
+
 (defun nol/set-xsettings-theme (theme)
   "Set XSETTINGS theme. Also expose custom properties `Net/ThemeColorBG',
 `Net/ThemeColorFG' and `Net/ThemeColorAccent'."
-  (setopt exwm-xsettings-theme (symbol-name theme))
+  (let ((theme-name (if (symbolp theme) (symbol-name theme) theme)))
+    (unless (nol/xsettings-theme-exists-p theme-name)
+      (display-warning
+       'xsettings
+       (format "GTK theme %s was not found in any standard theme directory: %s"
+	       theme-name
+	       (string-join (nol/xsettings-theme-directories) ", "))))
+    (setopt exwm-xsettings-theme theme-name))
   ;; When the theme is active, expose its main background and foreground colors
   ;; as XSETTINGS properties.
   (let ((bg (face-background 'default))
@@ -81,18 +118,18 @@
 			    ("Net/ThemeColorAccent" . ,accent)))
     (exwm-xsettings--update-settings)))
 
-(require 'circadian)
+;; (require 'circadian)
 
-(setopt circadian-verbose t)
+;; (setopt circadian-verbose t)
 
-(setq circadian-themes `((:sunrise . modus-operandi)
-			 (:sunset . modus-vivendi)))
+;; (setq circadian-themes `((:sunrise . modus-operandi)
+;; 			 (:sunset . modus-vivendi)))
 
-(setq circadian-after-load-theme-hook '(nol/set-xsettings-theme
-					;; nol/custom-set-faces
-					))
+;; (setq circadian-after-load-theme-hook '(nol/set-xsettings-theme
+;; 					;; nol/custom-set-faces
+;; 					))
 
-(circadian-setup)
+;; (circadian-setup)
 
 ;; To test the functions added to `circadian-after-load-theme-hook'
 ;;(run-hook-with-args 'circadian-after-load-theme-hook "base16-atelier-cave-light")

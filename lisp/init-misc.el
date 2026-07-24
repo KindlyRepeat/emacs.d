@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; for QMK
 (defun nol/centered-identifier (text)
   "Prompt for TEXT and insert it centered between underscores to a total length of 43."
@@ -160,8 +162,8 @@ by what's in the kill ring"
 
 (defun timu-ui-flash-mode-line ()
     "Flash the modeline on error or warning instead of the bell."
-    (invert-face 'mode-line)
-    (run-with-timer 0.1 nil #'invert-face 'mode-line))
+    (invert-face 'mode-line-active)
+    (run-with-timer 0.05 nil #'invert-face 'mode-line-active))
 
   (customize-set-variable 'ring-bell-function 'timu-ui-flash-mode-line)
 
@@ -269,7 +271,7 @@ With prefix ARG, undedicate it."
   :custom
   (awesome-tray-separator "   ")
   (awesome-tray-update-interval 1)
-  (awesome-tray-date-format "%A, %B %-d %Y")
+  (awesome-tray-date-format "   %A, %B %-d %Y")
   (awesome-tray-essential-modules '())
   :custom-face
   (awesome-tray-default-face ((t :inherit default :weight regular)))

@@ -1,0 +1,60 @@
+:PROPERTIES:
+:DESCRIPTION:
+:END:
+#+TITLE: emacs.d
+* Goal
+:PROPERTIES:
+:SUMMARY:  What this project is and the conditions under which it is considered done. Unlike Status, this rarely changes.
+:END:
+
+* Status
+:PROPERTIES:
+:SUMMARY:  Current project state: what you were working on, what is partially done, and the mental context needed to resume.
+:END:
+
+* Actions
+:PROPERTIES:
+:SUMMARY:  Concrete executable tasks. These should be specific enough that you can start without rethinking the project.
+:END:
+** TODO Rewrite exwm for use-package
+** TODO emacs knockknock for notifications ?
+agent-shell could use theme using agent-shell-knockknock (already packaged in my dotfiles) or agent-shell-notifications
+** WAITING Enable ts modes (especially markdown-ts-mode) (waiting for reconfigure)
+Try something like
+#+begin_src elisp
+  (setq treesit-extra-load-path
+        '("~/.guix-profile/lib/tree-sitter"
+          "~/.guix-home/profile/lib/tree-sitter"
+          "/run/current-system/profile/lib/tree-sitter"))
+#+end_src
+
+** NEXT Fix dark theme toggle. (see ~/dotfiles/gtk-themes)
+Firefox can change its theme when the gtk theme changes through xsettingsd, but the theme needs to exist in ~/.local/share/themes/.
+Maybe dank linux as a starting point ?
+*** TODO Create a base gtk theme
+*** TODO Define the colors for modus-vivendi and modus-operandi (+ a directory for each)
+*** TODO Fix (nol/xsettings-theme) to load 'modus-vivendi-Dark' instead of just 'modus-vivendi'
+** TODO Red when battery is low
+** TODO Notification when battery is low + another one when critical
+** TODO Order of init.el.
++ =circadian= need to be loaded early to load modus themes and make =modus-themes-with-colors= available.
++ =exwm= need to be loaded before circadian because of a call to =(nol/set-xsettings-theme)=
+* Open questions
+:PROPERTIES:
+:SUMMARY:  Unresolved uncertainties and things to research. Distinct from Next actions (executable) and Decisions (settled). Promote these to Decisions once resolved.
+:END:
+
+* Decisions
+:PROPERTIES:
+:SUMMARY:  Choices already made, especially ones you do not want to revisit repeatedly. Example: “Use Org as canonical project state.”
+:END:
+
+* Log
+:PROPERTIES:
+:SUMMARY:  Chronological record of work sessions, discoveries, blockers, and changes. Useful for reconstructing why the project is where it is.
+:END:
+
+* References
+:PROPERTIES:
+:SUMMARY:  Related files, documentation, external resources, and links needed to work on the project.
+:END:

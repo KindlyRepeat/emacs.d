@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package bibtex
   :custom
   (bibtex-set-dialect 'biblatex)

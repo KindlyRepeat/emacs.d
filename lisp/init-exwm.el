@@ -1,4 +1,4 @@
-;; (require 'exwm-randr)
+;; -*- lexical-binding: t; -*-
 
 ;; Test, does it work with a WM now? No it doesn't.
 (require 'exwm)
@@ -413,6 +413,6 @@ Otherwise, switch to the most recent EXWM Firefox buffer (not already shown)."
       ediff-split-window-function 'split-window-horizontally
       ediff-window-setup-function 'ediff-setup-windows-plain)
 
-(load "~/dotfiles/emacs/.config/emacs/lisp/circarian-exwm-xsettings.el")
+(load "~/.emacs.d/lisp/circarian-exwm-xsettings.el")
 
 (provide 'init-exwm)

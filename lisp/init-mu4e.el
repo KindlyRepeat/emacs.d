@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package mu4e
   :if (and (executable-find "mu")
 	   (executable-find "offlineimap"))
@@ -66,5 +68,5 @@
                     (smtpmail-smtp-user . "gk691095@ens.uqam.ca")
                     (smtpmail-smtp-server . "smtp.office365.com")
                     (smtpmail-smtp-service . 587)))))
-  
+
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode))

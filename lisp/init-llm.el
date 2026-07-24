@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun nol/format--envvar (env-var value)
   (concat env-var "=" value))
 

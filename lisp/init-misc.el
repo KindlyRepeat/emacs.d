@@ -160,13 +160,6 @@ by what's in the kill ring"
   (interactive "DDirectory to add: ")
   (add-to-list 'load-path path))
 
-(defun timu-ui-flash-mode-line ()
-    "Flash the modeline on error or warning instead of the bell."
-    (invert-face 'mode-line-active)
-    (run-with-timer 0.05 nil #'invert-face 'mode-line-active))
-
-  (customize-set-variable 'ring-bell-function 'timu-ui-flash-mode-line)
-
 (defun od/test-emacs-config ()
   "Launch an instance of Emacs that uses `~/dotfiles/emacs/.config/emacs/' as init file.
 Useful for testing purposes before deploying my dotfiles using `guix home reconfigure'."

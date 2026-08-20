@@ -111,7 +111,7 @@
 	delete-by-moving-to-trash nil
 	enable-recursive-minibuffers t
 	load-prefer-newer t
-	ring-bell-function 'timu-ui-flash-mode-line
+	ring-bell-function 'flash-face-bell-function
 	scroll-preserve-screen-position t
 	window-resize-pixelwise t
 	;; Try really hard to keep the cursor from getting stuck in the read-only prompt

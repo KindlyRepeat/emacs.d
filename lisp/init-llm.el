@@ -34,6 +34,12 @@
   (agent-shell-header-style 'graphical)
   (agent-shell-session-strategy 'new)
   (agent-shell-pi-acp-command '("/home/nic/dotfiles/scripts/bin/guix-shell-pi.sh" "pi-acp"))
+  (agent-shell-prefer-viewport-interaction t)
+  :init
+  (when (and (boundp 'project-prefix-map)
+	     (boundp 'project-switch-commands))
+    (keymap-set project-prefix-map "a" #'agent-shell-openai-start-codex)
+    (add-to-list 'project-switch-commands '(agent-shell-openai-start-codex "Agent shell") t))
   :config
   (setq agent-shell-openai-codex-acp-command '("codex-acp"))
   ;; (setq agent-shell-openai-codex-acp-command '("/gnu/store/xqqhv4a5qmcmj7p6cbnlj8sxfbgz43ay-node-agentclientprotocol-codex-acp-1.0.0/bin/codex-acp"))

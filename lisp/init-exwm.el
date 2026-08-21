@@ -1,5 +1,10 @@
 ;; -*- lexical-binding: t; -*-
 
+(use-package ednc
+  :demand t
+  :config
+  (ednc-mode))
+
 ;; It is necessary to set `default-directory' to a local directory. Otherwise, it will try to execute the
 ;; program on a remote host if the buffer is remote.
 (defun nol/volume-up ()
@@ -138,7 +143,7 @@ Otherwise, switch to the most recent EXWM Firefox buffer (not already shown)."
 						      (string-remove-suffix " — Nightly" exwm-title))))))))
   :custom
   ;; Use key-event if unsure
-  (exwm-input-global-key `(([XF86AudioRaiseVolume] . nol/volume-up)
+  (exwm-input-global-keys `(([XF86AudioRaiseVolume] . nol/volume-up)
 			   ([XF86AudioLowerVolume] . nol/volume-down)
 			   ([XF86AudioMute] . nol/volume-mute)
 			   ([XF86MonBrightnessUp] . nol/brightness-up)

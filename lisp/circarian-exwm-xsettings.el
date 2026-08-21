@@ -57,14 +57,14 @@
 		       ("Gtk/MonospaceFontName" . "FiraCode Nerd Font Mono")
 		       ("Gtk/CursorThemeName" . "Adwaita")
 		       ("Xft/Antialias" . 1)
+		       ("Xft/Hinting" . 1)
 		       ;; DPI is in 1024ths of an inch, so this is a DPI of
                        ;; 110, equivalent to a scaling factor ≅ 1.15
                        ;; (110 ≅ 1.15 * 96).
 		       ("Xft/DPI" . ,(* 110 1024))
 		       ("Xft/HintStyle" . "hintslight")
-		       ("Xft/RGBA" . "rgb")
-                       ("Xft/lcdfilter" . "lcddefault")
-		       ("Xft/RGBA" . "rgb")))
+		       ("Xft/RGBA" . "none") ; Accoring to ChatGPT, this might make white text on black background less blurry
+                       ("Xft/lcdfilter" . "lcddefault")))
 
 (exwm-xsettings-mode 1)
 ;; Make sure to kill xsettingsd first.
@@ -97,10 +97,17 @@ Also accept a matching THEME-Dark directory."
 			  theme-names))
 	      (nol/xsettings-theme-directories))))
 
+(defun nol/xsettings-theme-name (theme)
+  "Return the GTK theme name to use for Emacs THEME."
+  (let ((theme-name (if (symbolp theme) (symbol-name theme) theme)))
+    (if (string= theme-name "modus-vivendi")
+	"modus-vivendi-Dark"
+      theme-name)))
+
 (defun nol/set-xsettings-theme (theme)
   "Set XSETTINGS theme. Also expose custom properties `Net/ThemeColorBG',
 `Net/ThemeColorFG' and `Net/ThemeColorAccent'."
-  (let ((theme-name (if (symbolp theme) (symbol-name theme) theme)))
+  (let ((theme-name (nol/xsettings-theme-name theme)))
     (unless (nol/xsettings-theme-exists-p theme-name)
       (display-warning
        'xsettings

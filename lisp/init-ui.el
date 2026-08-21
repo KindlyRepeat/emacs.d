@@ -7,51 +7,29 @@
 
 ;;; Code:
 
-(set-face-attribute 'default nil :family "FiraCode Nerd Font Mono" :height 110)
+;;; Fonts
+
+;; (set-face-attribute 'default nil :family "FiraCode Nerd Font Mono" :height 110)
 ;; (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font Mono" :height 110)
-(set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font Mono" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 115)
+;; (set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 115)
 
-;; Lighter font weight in minibuffer
-;; (dolist (buffer (list " *Minibuf-0*" " *Minibuf-1*" ))
-;;   (when (get-buffer buffer)
-;;     (with-current-buffer buffer
-;;       (face-remap-add-relative 'bold :weight 'normal)
-;;       (face-remap-add-relative 'default :weight 'light))))
+(set-face-attribute 'default nil :family "AporeticSansMonoNerdFont" :height 125)
+(set-face-attribute 'fixed-pitch nil :family "AporeticSansMonoNerdFont" :height 125)
+(set-face-attribute 'variable-pitch nil :family "Aporetic Sans" :height 125)
 
-;; (add-hook 'minibuffer-setup-hook
-;;           '(lambda()
-;;              (face-remap-add-relative 'bold :weight 'normal)
-;;              (face-remap-add-relative 'default :weight 'light)))
-
-;; Keep this package first as it load a modus themes and enable the use of
-;; `modus-themes-with-colors' macro.
-(use-package circadian
-  :demand t
-  :custom
-  (circadian-verbose t)
-  (circadian-themes '((:sunrise . modus-operandi)
-		      (:sunset . modus-vivendi)))
-  :config
-  (when od/exwm-enabled
-    (setq circadian-after-load-theme-hook '(nol/set-xsettings-theme)))
-
-  (circadian-setup))
+;;; Modus theme setup
 
 ;; Do not use-package as its a theme, not a package !
+;; Require `modus-themes' without loading it, making `modus-themes-with-colors' available.
 (require-theme 'modus-themes)
 
+;; Those need to be set before a modus theme is loaded (by circadian)
 (setopt modus-themes-bold-constructs t)
-(setopt modus-themes-italic-constructs t)
+(setopt modus-themes-italic-constructs nil)
 (setopt modus-themes-mixed-fonts t)
 
-;; (modus-themes-with-colors
-;;   (custom-set-faces
-;;    `(mode-line-buffer-id ((,c :foreground "#000000")))))
-
 (setq modus-themes-common-palette-overrides
-      `(
-        ;; From the section "Make the mode line borderless"
+      `(;; From the section "Make the mode line borderless"
         (border-mode-line-active unspecified)
         (border-mode-line-inactive unspecified)
 	;; Make it closer to the background color
@@ -60,30 +38,55 @@
 	;; Colorful background for active tab
 	(bg-tab-bar bg-inactive)
         (bg-tab-current bg-cyan-subtle)
-        (bg-tab-other bg-dim)))
+        (bg-tab-other bg-dim)
 
-;; Do not set a background color as moody-tab will overwrite it.
-(defface nol/mode-line-selected-buffer-id
-  '((t :inherit bold))
-  "Face for the buffer id in the selected window's mode line.")
+	;; (fg-heading-1 blue-warmer)
+        ;;      (fg-heading-2 yellow-cooler)
+        ;;      (fg-heading-3 cyan-cooler)
+	(fg-heading-1 fg-main)
+        (bg-heading-1 bg-dim)
+        (overline-heading-1 border)
+	(fg-heading-2 fg-alt)
+        (bg-heading-2 bg-main)
+        (overline-heading-2 border)))
 
-(defun nol/set-modus-mode-line-faces ()
+(setq modus-themes-headings
+      '((0 . 3.0)
+	(1 . (1.2))
+	(2 . (1.1))))
+
+;;; Color selected window mode-line buffer ID
+
+(defun nol/set-modus-dependent-faces ()
   (modus-themes-with-colors
-    (custom-theme-set-faces
+    (let ((heading-1-fg (color-darken-name fg-main 5))
+	  (heading-2-fg (color-darken-name fg-main 10)))
+      (custom-theme-set-faces
      'user
-     `(nol/mode-line-selected-buffer-id
-       ((t (:inherit bold :foreground ,accent-0)))))))
+     `(mode-line-buffer-id		; this will be bold if `modus-themes-bold-constructs' is set before a modus theme is loaded
+       ((t (:inherit bold :foreground ,accent-0))))
 
-(add-hook 'modus-themes-after-load-theme-hook #'nol/set-modus-mode-line-faces)
-(nol/set-modus-mode-line-faces)
+     `(modus-themes-heading-0
+       ((t (:family "Aldrich" :height 3.0 :underline t))))
+
+     ;; `(modus-themes-heading-1
+     ;;   ((t (:foreground ,heading-1-fg))))
+
+     ;; `(modus-themes-heading-2
+     ;;   ((t :foreground ,heading-2-fg)))
+
+     `(org-todo
+       ((t (:font "Aldrich" :background ,bg-main :foreground ,red :weight bold))))))))
+
+(add-hook 'modus-themes-after-load-theme-hook #'nol/set-modus-dependent-faces)
 
 (defun nol/propertized-buffer-identification (fmt)
   "Like `propertized-buffer-identification', but use a special face in the selected window."
   (list
    (propertize fmt
                'face (if (mode-line-window-selected-p)
-                         'nol/mode-line-selected-buffer-id
-                       'mode-line-buffer-id)
+                         'mode-line-buffer-id
+                       'bold)
                'help-echo
                (purecopy "Buffer name
 mouse-1: Previous buffer
@@ -94,64 +97,90 @@ mouse-3: Next buffer")
 (setq-default mode-line-buffer-identification
               '(:eval (nol/propertized-buffer-identification "%12b")))
 
+;;; Circadian
+
+(defun nol/run-modus-after-load-theme-hook (theme)
+  "Run Modus after-load hook when Circadian loads a Modus THEME."
+  (when (string-prefix-p "modus-" (symbol-name theme))
+    (run-hooks 'modus-themes-after-load-theme-hook)))
+
+(defun nol/circadian-after-load-theme (theme)
+  "Extra things to do after Circadian loads THEME."
+  (nol/run-modus-after-load-theme-hook theme)
+
+  (when (and (bound-and-true-p od/exwm-enabled)
+             (fboundp 'nol/set-xsettings-theme))
+    (nol/set-xsettings-theme theme)))
+
+;; Keep this package first as it load a modus themes and enable the use of
+;; `modus-themes-with-colors' macro.
+(require 'circadian)
+(setopt circadian-verbose t
+	circadian-themes '((:sunrise . modus-operandi)
+			   (:sunset . modus-vivendi)))
+
+(add-hook 'circadian-after-load-theme-hook #'nol/circadian-after-load-theme)
+
+(circadian-setup)
+
 ;; Set configuration per machine and fix some faces because `base16-theme.el' does a poor job.
 ;; TODO: Set per machine with a fallback that would work on any machine
 ;; TODO: Rewrite with modus-themes-with-colors
-(defun nol/custom-set-faces ()
-    (custom-theme-set-faces
-     'user
-     '(default ((t (:family "FiraCode Nerd Font Mono" ;; :height 113
-			    :weight regular))))
-     '(fixed-pitch ((t (:family "FiraCode Nerd Font Mono" ;; :height 113
-				:weight regular))))
-     '(variable-pitch ((t (:family "Atkinson Hyperlegible" ;; :height 125
-				   :weight regular))))
-					;
-     ;; mode-line should have height 0.9 and a box of width 1
-     ;; mode-line-active should inherit mode-line but with background and foreground of default
-     ;; `(mode-line ((t (:height 0.9 :box (:line-width 1 :color ,(face-attribute 'default :foreground))))))
-     ;; `(mode-line-active ((t ( :inherit mode-line
-     ;; 			      :foreground ,(face-attribute 'default :foreground)
-     ;; 			      :background ,(face-attribute 'default :background)))))
-     ;; `(mode-line-inactive ((t ( :inherit mode-line
-     ;; 				:foreground ,(face-attribute 'base16-base03 :background)
-     ;; 				:background ,(face-attribute 'base16-base01 :background)))))
+;; (defun nol/custom-set-faces ()
+;;     (custom-theme-set-faces
+;;      'user
+;;      '(default ((t (:family "FiraCode Nerd Font Mono" ;; :height 113
+;; 			    :weight regular))))
+;;      '(fixed-pitch ((t (:family "FiraCode Nerd Font Mono" ;; :height 113
+;; 				:weight regular))))
+;;      '(variable-pitch ((t (:family "Atkinson Hyperlegible" ;; :height 125
+;; 				   :weight regular))))
+;; 					;
+;;      ;; mode-line should have height 0.9 and a box of width 1
+;;      ;; mode-line-active should inherit mode-line but with background and foreground of default
+;;      ;; `(mode-line ((t (:height 0.9 :box (:line-width 1 :color ,(face-attribute 'default :foreground))))))
+;;      ;; `(mode-line-active ((t ( :inherit mode-line
+;;      ;; 			      :foreground ,(face-attribute 'default :foreground)
+;;      ;; 			      :background ,(face-attribute 'default :background)))))
+;;      ;; `(mode-line-inactive ((t ( :inherit mode-line
+;;      ;; 				:foreground ,(face-attribute 'base16-base03 :background)
+;;      ;; 				:background ,(face-attribute 'base16-base01 :background)))))
 
-     ;; 				      ))))
-     ;; ;; `(mode-line-active ((t (:inherit header-line :height 0.8 :foreground ,(face-attribute 'default :foreground) :box nil))))
-     '(highlight ((t (:inherit match))))
-     '(mode-line-buffer-id ((t (:inherit bold))))
-     `(header-line ((t ( :inherit mode-line-inactive
-			 :box ( :line-width 1
-				:color ,(face-attribute 'mode-line :background)
-				:style nil)))))
-     ;; '(mode-line-inactive ((t (:inherit mode-line))))
+;;      ;; 				      ))))
+;;      ;; ;; `(mode-line-active ((t (:inherit header-line :height 0.8 :foreground ,(face-attribute 'default :foreground) :box nil))))
+;;      '(highlight ((t (:inherit match))))
+;;      '(mode-line-buffer-id ((t (:inherit bold))))
+;;      `(header-line ((t ( :inherit mode-line-inactive
+;; 			 :box ( :line-width 1
+;; 				:color ,(face-attribute 'mode-line :background)
+;; 				:style nil)))))
+;;      ;; '(mode-line-inactive ((t (:inherit mode-line))))
 
-     ;; '(mode-line ((t (:box (:line-width -1 :style released-button)) :inverse-video t)))
-     ;; '(mode-line-active ((t (:inherit mode-line))))
-     ;; '(mode-line-inactive ((t (:inherit mode-line :weight light))))
+;;      ;; '(mode-line ((t (:box (:line-width -1 :style released-button)) :inverse-video t)))
+;;      ;; '(mode-line-active ((t (:inherit mode-line))))
+;;      ;; '(mode-line-inactive ((t (:inherit mode-line :weight light))))
 
-     '(org-block ((t (:inherit fixed-pitch))))
-     '(org-code ((t (:inherit (shadow fixed-pitch)))))
-     '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-     '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
-     '(org-link ((t (:underline t))))
-     '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-     '(org-property-value ((t (:inherit fixed-pitch))) t)
-     '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-     '(org-table ((t (:inherit fixed-pitch))))
-     '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-     '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+;;      '(org-block ((t (:inherit fixed-pitch))))
+;;      '(org-code ((t (:inherit (shadow fixed-pitch)))))
+;;      '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+;;      '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+;;      '(org-link ((t (:underline t))))
+;;      '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+;;      '(org-property-value ((t (:inherit fixed-pitch))) t)
+;;      '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+;;      '(org-table ((t (:inherit fixed-pitch))))
+;;      '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+;;      '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
 
-     '(org-document-title ((t (:family "Iosevka Aile" :height 2.00 :weight bold :underline t))))
-     '(org-level-1 ((t (:inherit outline-1 :weight semibold))))
-     '(org-level-2 ((t (:inherit outline-2 :weight semibold))))
-     '(org-level-3 ((t (:inherit outline-3 :weight semibold))))
-     '(org-level-4 ((t (:inherit outline-4 :weight semibold))))
-     '(org-level-5 ((t (:inherit outline-5 :weight semibold))))
-     '(org-level-6 ((t (:inherit outline-6 :weight semibold))))
-     '(org-level-7 ((t (:inherit outline-7 :weight semibold))))
-     '(org-level-8 ((t (:inherit outline-8 :weight semibold))))))
+;;      '(org-document-title ((t (:family "Iosevka Aile" :height 2.00 :weight bold :underline t))))
+;;      '(org-level-1 ((t (:inherit outline-1 :weight semibold))))
+;;      '(org-level-2 ((t (:inherit outline-2 :weight semibold))))
+;;      '(org-level-3 ((t (:inherit outline-3 :weight semibold))))
+;;      '(org-level-4 ((t (:inherit outline-4 :weight semibold))))
+;;      '(org-level-5 ((t (:inherit outline-5 :weight semibold))))
+;;      '(org-level-6 ((t (:inherit outline-6 :weight semibold))))
+;;      '(org-level-7 ((t (:inherit outline-7 :weight semibold))))
+;;      '(org-level-8 ((t (:inherit outline-8 :weight semibold))))))
 
 (defun nol/fix-gnus-modus-face-cycle (theme &rest _)
   "Prevent a Gnus/Modus inheritance cycle in Emacs 31."
@@ -173,7 +202,10 @@ mouse-3: Next buffer")
 			 theme-or-name)))
     (mapc #'disable-theme custom-enabled-themes)
     (load-theme theme-or-name t)
-    (nol/custom-set-faces)))
+    (nol/custom-set-faces)
+    (when (and od/exwm-enabled
+	       (fboundp 'nol/set-xsettings-theme))
+      (nol/set-xsettings-theme theme-or-name))))
 
 ;; Might wanna take a look at `modify-all-frame-parameters'
 (defun od/set-all-fonts (fixed-face variable-face default-height &optional variable-factor)
@@ -850,7 +882,7 @@ might need to be put in cache using the command `gtk-update-icon-cache -f
 	prism-parens t))
 
 (use-package shrface
-  :if (unless (string= (system-name) "perfidy"))
+  :disabled t
   :after eww
   :bind (:map shrface-mode-map
 	      (("C-c C-p" . shrface-previous-headline)

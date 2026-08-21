@@ -19,6 +19,8 @@
 	(("C-c M-e" . org-edit-headline)
 	 ("C-c C-p" . nol/org-previous-heading-at-top)
 	 ("C-c C-n" . nol/org-next-heading-at-top)))
+  :custom
+  (org-fontify-whole-heading-line t)
   :init
   (defun insert-tilde (&optional arg)
     "Enclose following ARG sexps or region in tildes (~).
@@ -80,7 +82,7 @@ No argument inserts a pair of tildes and leaves point between them."
 	org-archive-location "::* Archive"
 	org-deadline-warning-days 7
 	org-directory "~/Nextcloud/org"
-	org-ellipsis "  ▾"
+	org-ellipsis "  ⤵"
 	org-hide-emphasis-markers t
 	org-insert-heading-respect-content t
 	org-log-into-drawer "LOGBOOK"
@@ -295,12 +297,10 @@ No argument inserts a pair of tildes and leaves point between them."
   (setq org-imenu-depth 5))
 
 (use-package org-faces
-  :config
-  (set-face-attribute 'org-document-title nil :font "Iosevka Aile"
-		      :weight 'light
-		      :height 1.8
-		      :underline t)
-  (setq org-fontify-quote-and-verse-blocks t))
+  :custom-face
+  (org-ellipsis ((t (:inherit shadow :weight regular))))
+  :custom
+  (org-fontify-quote-and-verse-blocks t))
 
 (use-package org-habit
   :after org-agenda
@@ -362,6 +362,7 @@ No argument inserts a pair of tildes and leaves point between them."
   (setq org-src-window-setup 'current-window))
 
 (use-package org-modern
+  :disabled t
   :after org
   :hook
   (org-mode . org-modern-mode)

@@ -264,13 +264,22 @@ With prefix ARG, undedicate it."
   :custom
   (awesome-tray-separator "   ")
   (awesome-tray-update-interval 1)
-  (awesome-tray-date-format "   %A, %B %-d %Y")
+  (awesome-tray-date-format "   %A, %B %-d %Y - ")
   (awesome-tray-essential-modules '())
   :custom-face
-  (awesome-tray-default-face ((t :inherit default :weight regular)))
+  (battery-load-critical
+   ((t (:foreground "red"))))
+  (awesome-tray-default-face ((t :inherit fixed-pitch :weight regular)))
   (awesome-tray-module-date-face ((t :inherit awesome-tray-default-face)))
+  (awesome-tray-volume-bluetooth-face
+   ((((background dark))
+     (:inherit awesome-tray-default-face
+      :foreground "DeepSkyBlue"))
+    (((background light))
+     (:inherit awesome-tray-default-face
+      :foreground "RoyalBlue"))))
   :init
-  (defvar awesome-tray-cpu-usage-threshold 30
+    (defvar awesome-tray-cpu-usage-threshold 30
     "Only show CPU usage above this percentage.")
   (defvar awesome-tray-ram-usage-threshold 90
     "Only show RAM usage above this percentage.")
@@ -294,7 +303,7 @@ With prefix ARG, undedicate it."
     "Return the current date with an ordinal day."
     (let* ((time (decode-time))
            (day (decoded-time-day time)))
-      (format "%s, %s %s %s %s"
+      (format "%s, %s %s %s - %s"
               (format-time-string "%A")
               (format-time-string "%B")
               (awesome-tray--ordinal-day day)
@@ -536,11 +545,13 @@ fraction of the character size. COLOR defaults to foreground."
        (make-string empty ?▱))))
 
   (defun awesome-tray-battery-maybe-critical (string percent plugged-in)
-    "Apply `battery-load-critical' to STRING if PERCENT is critical."
-    (if (and (not plugged-in)
-             (<= percent awesome-tray-battery-critical-threshold))
-	(propertize string 'face 'battery-load-critical)
-      string))
+    "Apply the appropriate face to battery STRING."
+    (propertize
+     string 'face
+     (if (and (not plugged-in)
+              (<= percent awesome-tray-battery-critical-threshold))
+         '(battery-load-critical awesome-tray-default-face)
+       'awesome-tray-default-face)))
 
   (defun awesome-tray-module-battery-info-v2 ()
     (let ((current-seconds (awesome-tray-current-seconds)))
@@ -596,14 +607,22 @@ fraction of the character size. COLOR defaults to foreground."
        (make-string empty ?▱))))
 
   (defun awesome-tray-volume-format (info)
-    "Format volume INFO plist for awesome-tray."
-    (let ((percent (plist-get info :percent))
-          (muted (plist-get info :muted)))
-      (if muted
-          (format "♪ %s mute" (awesome-tray-volume-bar 0))
-	(format "♪ %s %d%%"
-		(awesome-tray-volume-bar percent)
-		percent))))
+    "Format volume INFO for awesome-tray."
+    (let* ((percent (plist-get info :percent))
+           (muted (plist-get info :muted))
+           (bluetooth (plist-get info :bluetooth))
+           (text
+            (if muted
+                (format "♪ %s mute"
+                        (awesome-tray-volume-bar 0))
+              (format "♪ %s %d%%"
+                      (awesome-tray-volume-bar percent)
+                      percent))))
+      (propertize
+       text 'face
+       (if bluetooth
+           'awesome-tray-volume-bluetooth-face
+         'awesome-tray-default-face))))
 
   (defun awesome-tray-volume-refresh ()
     "Force refresh awesome-tray volume cache."
@@ -619,9 +638,10 @@ fraction of the character size. COLOR defaults to foreground."
     (force-mode-line-update t))
 
   (defun awesome-tray-volume-from-pactl ()
-    "Return plist with volume info using pactl."
-    (let* ((sink (string-trim
-                  (car (process-lines "pactl" "get-default-sink"))))
+    "Return volume information for the default PulseAudio sink."
+    (let* ((sink
+            (string-trim
+             (car (process-lines "pactl" "get-default-sink"))))
            (volume-output
             (string-join
              (process-lines "pactl" "get-sink-volume" sink)
@@ -630,10 +650,16 @@ fraction of the character size. COLOR defaults to foreground."
             (string-join
              (process-lines "pactl" "get-sink-mute" sink)
              " "))
-           (muted (string-match-p "yes" mute-output)))
+           (muted (string-match-p "yes" mute-output))
+           (bluetooth
+            (let ((case-fold-search t))
+              (string-match-p "bluez" sink))))
       (when (string-match "\\([0-9]+\\)%" volume-output)
-	(list :percent (string-to-number (match-string 1 volume-output))
-              :muted muted))))
+        (list :percent
+              (string-to-number (match-string 1 volume-output))
+              :muted muted
+              :bluetooth bluetooth
+              :sink sink))))
 
   (defun awesome-tray-module-volume-info-v2 ()
     "Return volume status for awesome-tray."
@@ -661,13 +687,13 @@ fraction of the character size. COLOR defaults to foreground."
       ;; Overwrite default battery module to use default face (and
       ;; battery-load-critical if low battery)
       (add-to-list 'awesome-tray-module-alist
-		   '("battery" . (awesome-tray-module-battery-info-v2 awesome-tray-default-face)))
+		   '("battery" . (awesome-tray-module-battery-info-v2 nil)))
       ;; Overwrite default volume module. Use pactl directly instead of `volume'
       ;; package.
       (setq awesome-tray-module-alist
 	    (assoc-delete-all "volume" awesome-tray-module-alist))
       (add-to-list 'awesome-tray-module-alist
-		   '("volume" . (awesome-tray-module-volume-info-v2 awesome-tray-default-face)))
+		   '("volume" . (awesome-tray-module-volume-info-v2 nil)))
 
       (setq awesome-tray-hide-mode-line nil
 	    awesome-tray-active-modules '(;; "nextcloud"

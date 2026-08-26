@@ -274,12 +274,12 @@ With prefix ARG, undedicate it."
   (awesome-tray-volume-bluetooth-face
    ((((background dark))
      (:inherit awesome-tray-default-face
-      :foreground "DeepSkyBlue"))
+	       :foreground "DeepSkyBlue"))
     (((background light))
      (:inherit awesome-tray-default-face
-      :foreground "RoyalBlue"))))
+	       :foreground "RoyalBlue"))))
   :init
-    (defvar awesome-tray-cpu-usage-threshold 30
+  (defvar awesome-tray-cpu-usage-threshold 30
     "Only show CPU usage above this percentage.")
   (defvar awesome-tray-ram-usage-threshold 90
     "Only show RAM usage above this percentage.")
@@ -488,52 +488,8 @@ With prefix ARG, undedicate it."
             (setq awesome-tray-nextcloud-status-cache status))
 	awesome-tray-nextcloud-status-cache)))
 
-  (defvar awesome-tray-svg-last-time 0
-    "Last time ...")
-  (defvar awesome-tray-svg-status-cache ""
-    "Cache of ... status.")
-  (defvar awesome-tray-svg-update-duration 1
-    "Update duration for ..., in seconds.")
-  (defvar awesome-tray-svg-sizes '(0.5 0.8 1.0)
-    "The circle will use these sizes, one at a time")
-  (defvar awesome-tray-svg-last-size 1.0
-    "Size of the last circle that got displayed")
-
-  (defun nol/next-value (current values)
-    (or (cadr (member current values))
-	(car values)))
-
-  (defun svg-circle-glyph (size &optional color)
-  "Return an SVG image of a circle with relative SIZE (0.0 to 1.0)
-sized to match one text character. SIZE is the diameter as a
-fraction of the character size. COLOR defaults to foreground."
-  (let* ((size (or size 1.0))
-         (color (or color (face-attribute 'default :foreground)))
-         ;; Character dimensions in pixels
-         (char-width  (window-font-width))
-         (char-height (window-font-height))
-         ;; Use the smaller dimension to keep circle proportional
-         (radius (* (/ (min char-width char-height) 2.0) size))
-         (cx (/ char-width  2.0))
-         (cy (/ char-height 2.0))
-         (svg (svg-create char-width char-height)))
-    (svg-circle svg cx cy radius :stroke color :stroke-width 2.0 :fill "none")
-    (svg-image svg :ascent 'center :scale 1)))
-
-  (defun awesome-tray-module-svg-info ()
-    (let ((current-seconds (awesome-tray-current-seconds)))
-      (if (> (- current-seconds awesome-tray-svg-last-time)
-             awesome-tray-svg-update-duration)
-	  (let* ((new-size (nol/next-value awesome-tray-svg-last-size
-					   awesome-tray-svg-sizes))
-		 (status (propertize " " 'display (svg-circle-glyph new-size "white"))))
-	    (setq awesome-tray-svg-last-time current-seconds)
-	    (setq awesome-tray-svg-last-size new-size)
-	    (setq awesome-tray-svg-status-cache status))
-	awesome-tray-svg-status-cache)))
-
   (defvar awesome-tray-battery-critical-threshold 20
-  "Battery percentage below which to use `battery-load-critical' face.")
+    "Battery percentage below which to use `battery-load-critical' face.")
 
   (defun awesome-tray-battery-bar (percent)
     "Return a 5-cell battery bar for PERCENT."
@@ -589,7 +545,7 @@ fraction of the character size. COLOR defaults to foreground."
 	awesome-tray-battery-status-cache)))
 
   (defvar awesome-tray-volume-status-cache ""
-  "Cached volume status for awesome-tray.")
+    "Cached volume status for awesome-tray.")
 
   (defvar awesome-tray-volume-status-last-time 0
     "Last time volume status was updated.")
@@ -669,37 +625,41 @@ fraction of the character size. COLOR defaults to foreground."
 	(awesome-tray-volume-refresh))
       awesome-tray-volume-status-cache))
 
-      :config
-      (add-to-list 'awesome-tray-module-alist
-		   '("network" . (awesome-tray-module-network-info awesome-tray-default-face)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("cpu" . (awesome-tray-module-cpu-info awesome-tray-default-face)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("ram-info" . (awesome-tray-module-ram-info awesome-tray-default-face)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("disk-info" . (awesome-tray-module-disk-info awesome-tray-default-face)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("nextcloud" . (awesome-tray-module-nextcloud-info awesome-tray-default-face)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("circle" . (awesome-tray-module-svg-info nil)))
-      (add-to-list 'awesome-tray-module-alist
-		   '("pretty-date" . (awesome-tray-module-pretty-date-info awesome-tray-default-face)))
-      ;; Overwrite default battery module to use default face (and
-      ;; battery-load-critical if low battery)
-      (add-to-list 'awesome-tray-module-alist
-		   '("battery" . (awesome-tray-module-battery-info-v2 nil)))
-      ;; Overwrite default volume module. Use pactl directly instead of `volume'
-      ;; package.
-      (setq awesome-tray-module-alist
-	    (assoc-delete-all "volume" awesome-tray-module-alist))
-      (add-to-list 'awesome-tray-module-alist
-		   '("volume" . (awesome-tray-module-volume-info-v2 nil)))
+  (defun awesome-tray-guix-icon ()
+    "Return the Guix icon"
+    "[ ]")
 
-      (setq awesome-tray-hide-mode-line nil
-	    awesome-tray-active-modules '(;; "nextcloud"
-					  "disk-info" "ram-info" "cpu" "network"
-					  "volume" "battery" "pretty-date"))
-      (awesome-tray-mode 1))
+  :config
+  (add-to-list 'awesome-tray-module-alist
+	       '("network" . (awesome-tray-module-network-info awesome-tray-default-face)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("cpu" . (awesome-tray-module-cpu-info awesome-tray-default-face)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("ram-info" . (awesome-tray-module-ram-info awesome-tray-default-face)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("disk-info" . (awesome-tray-module-disk-info awesome-tray-default-face)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("nextcloud" . (awesome-tray-module-nextcloud-info awesome-tray-default-face)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("pretty-date" . (awesome-tray-module-pretty-date-info awesome-tray-default-face)))
+  ;; Overwrite default battery module to use default face (and
+  ;; battery-load-critical if low battery)
+  (add-to-list 'awesome-tray-module-alist
+	       '("battery" . (awesome-tray-module-battery-info-v2 nil)))
+  (add-to-list 'awesome-tray-module-alist
+	       '("guix-icon" . (awesome-tray-guix-icon nil)))
+  ;; Overwrite default volume module. Use pactl directly instead of `volume'
+  ;; package.
+  (setq awesome-tray-module-alist
+	(assoc-delete-all "volume" awesome-tray-module-alist))
+  (add-to-list 'awesome-tray-module-alist
+	       '("volume" . (awesome-tray-module-volume-info-v2 nil)))
+
+  (setq awesome-tray-hide-mode-line nil
+	awesome-tray-active-modules '(;; "nextcloud"
+				      "disk-info" "ram-info" "cpu" "network"
+				      "volume" "battery" "pretty-date" "guix-icon"))
+  (awesome-tray-mode 1))
 
 (use-package burly
   :disabled t

@@ -811,12 +811,7 @@ With prefix ARG, undedicate it."
   (help-mode . (lambda () (toggle-truncate-lines -1)))
   :custom
   (help-window-select t)
-  (help-enable-variable-value-editing t)
-  :config
-  (add-to-list 'display-buffer-alist
-	       '("\\*Help\\*"
-		 (display-buffer-reuse-mode-window)
-		 (inhibit-same-window . t))))
+  (help-enable-variable-value-editing t))
 
 (use-package helpful
   :disabled t
@@ -840,20 +835,12 @@ With prefix ARG, undedicate it."
   :config
   (setq helpful-max-buffers 10
 	helpful-switch-buffer-function 'display-buffer) ; This is so useful with `embark-act-noquit'.
-
-  (add-to-list 'display-buffer-alist
-	       '("\\*helpful.*\\*"
-		 (display-buffer-reuse-mode-window)
-		 (inhibit-same-window . t))))
+ )
 
 (use-package hide-mode-line
   :bind (("C-x x h" . hide-mode-line-mode)))
 
 (use-package inspector
-  :init
-  ;; doesn't work
-  ;; (add-to-list 'display-buffer-alist '("*inspector*"
-  ;; 				       (display-buffer-reuse-window)))
   :config
   (defun od/eval-last-sexp (arg)
     (interactive "P")
@@ -1158,18 +1145,62 @@ With prefix ARG, undedicate it."
 
 ;; TODO: Spawn a popup shell buffer at startup
 (use-package popper
-  :disabled t				; TODO: It breaks `moody-replace-mode-line-buffer-identification' with *Help* buffer
+  :demand t
   :bind (("C-'"   . popper-toggle)
          ("M-'"   . popper-cycle)
-         ("C-M-'" . popper-toggle-type))
+         ("C-M-'" . popper-toggle-type)
+	 ("C-;"   . nol/popper-toggle-project-shell))
   :init
+  (defun nol/project-shell-buffer ()
+    "Return the default shell buffer for the current project, or nil."
+    (let* ((default-directory (project-root (project-current t)))
+           (name (project-prefixed-buffer-name "shell")))
+      (get-buffer name)))
+
+  (defun nol/popper-display-buffer (buf)
+    "Display BUF using Popper's popup display style."
+    (if popper-mode
+	;; `popper-display-function' is usually a `display-buffer' function,
+	;; e.g. `display-buffer-in-side-window', so pass BUF and an alist.
+	(funcall popper-display-function buf nil)
+      (display-buffer buf)))
+
+  (defun nol/popper-toggle-project-shell ()
+    "Toggle the current project's shell using Popper's display style.
+
+If the current project's shell buffer is visible, hide it.
+If it exists but is hidden, show it as a popup.
+If it does not exist, call `project-shell'."
+    (interactive)
+    (require 'project)
+    (let* ((buf (nol/project-shell-buffer))
+           (win (and buf (get-buffer-window buf t))))
+      (cond
+       ;; Visible: hide it.
+       (win
+	(if (fboundp 'popper--delete-popup)
+            (popper--delete-popup win)
+          (delete-window win)))
+
+       ;; Exists but hidden: show as Popper-style popup.
+       (buf
+	(nol/popper-display-buffer buf))
+
+       ;; Doesn't exist: create it using `project-shell'.
+       (t
+	(if popper-mode
+            (let ((display-buffer-overriding-action
+                   `((,popper-display-function))))
+              (project-shell))
+          (project-shell))))))
+
+  ;; Omit `shell-mode' as it is managed by its own function
   (setq popper-reference-buffers
         '("\\*Messages\\*"
           "Output\\*$"
-          ;; "\\*Async Shell Command\\*"
-	  shell-mode
           help-mode
-          compilation-mode))
+          compilation-mode
+	  Man-mode))
   (popper-mode +1)
   (popper-echo-mode +1) ; For echo area hints
   :config

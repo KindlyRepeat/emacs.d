@@ -58,15 +58,7 @@ directory to make multiple eshell windows easier."
       (eshell-send-input)
 
       (with-selected-window window
-	(set-window-dedicated-p window t))))
-  :config
-  (add-to-list 'display-buffer-alist
-	       '("\\*eshell\\*"
-		 (display-buffer-in-side-window)
-		 (side . bottom)
-		 (window-height . 0.35)
-		 (dedicated . t)
-		 (preserve-size . (t . t)))))
+	(set-window-dedicated-p window t)))))
 
 (use-package eshell-toggle
   :commands (eshell-toggle)

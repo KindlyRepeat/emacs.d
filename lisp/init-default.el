@@ -350,14 +350,7 @@ No argument inserts a pair of quotes and leaves point between them."
   ;; written to a file overwrites the error.
   (add-hook 'after-save-hook #'od/lisp-data-mode-before-save-hook))
 
-(use-package man
-  :config
-  ;; Focus the Man page so it can be buried easily, restoring the previous window configuration.
-  (add-to-list 'display-buffer-alist
-	       '("\\*Man.*\\*"
-		 (lambda (buffer alist)
-		   (let ((window (display-buffer-pop-up-window buffer alist)))
-		     (when window (select-window window)))))))
+(use-package man)
 
 (use-package message
   :custom (message-send-mail-function 'message-send-mail-with-sendmail))
@@ -546,6 +539,17 @@ Add this function to appropriate major mode hooks such as
 				  (project-shell "Shell")
 				  (project-compile "Compile"))
 	project-vc-extra-root-markers '(".project")) ; This variable was added in version 0.9.0
+
+  ;; Overwrite this function, adding spaces before and after the '-'.
+  (defun project-prefixed-buffer-name (mode)
+    (concat "*"
+            (if-let* ((proj (project-current nil)))
+		(project-name proj)
+              (file-name-nondirectory
+               (directory-file-name default-directory)))
+            " - "
+            (downcase mode)
+            "*"))
 
   (defun od/project-filter-remote-projects (r)
     "Prevent saving of remote projects because Tramp trying to establish a connection is annoying."

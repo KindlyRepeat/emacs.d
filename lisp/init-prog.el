@@ -8,16 +8,7 @@
   (clojure-mode . cider-mode)
   :config
   (setq cider-prompt-for-symbol t
-	cider-save-file-on-load t)
-
-  (add-to-list 'display-buffer-alist
-	       '("\\*cider-\\(doc\\|apropos\\|clojuredocs\\)"
-		 (display-buffer-in-side-window)
-		 (side . top)
-		 (window-height . 0.35)
-		 (dedicated . t)
-		 (slot . 1)
-		 (preserve-size . (t . t)))))
+	cider-save-file-on-load t))
 
 (use-package eglot
   :commands (eglot))

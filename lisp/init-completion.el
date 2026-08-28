@@ -50,16 +50,7 @@ See `consult-grep' for details."
   ;; TODO: this must move
   (add-to-list 'consult-mode-histories '(cider-repl-mode . cider-repl-input-history))
 
-  (add-to-list 'display-buffer-alist
-	       '("\\*Embark Collect:.*"
-		 (display-buffer-in-side-window)
-		 (side . left)
-		 (window-height . 35)
-		 (dedicated . t)
-		 (slot . 1)
-		 (preserve-size . (t . t))))
-
-  ;; Use Orderless as pattern compiler for consult-grep/ripgrep/find
+    ;; Use Orderless as pattern compiler for consult-grep/ripgrep/find
   ;; How to make it work for consult-man ?
   (defun consult--orderless-regexp-compiler (input type &rest _config)
     (setq input (orderless-pattern-compiler input))

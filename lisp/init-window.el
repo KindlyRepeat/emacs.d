@@ -7,6 +7,30 @@
 
 ;;; Code:
 
+(setq display-buffer-alist
+	'(("\\*eshell\\*"
+	   (display-buffer-in-side-window)
+	   (side . bottom)
+	   (window-height . 0.35)
+	   (dedicated . t)
+	   (preserve-size t . t))
+	  ("\\*Help\\*\\\|*helpful.*\*"
+	   (display-buffer-reuse-mode-window)
+	   (window-width . 70)
+	   (window-height . shrink-window-if-larger-than-buffer)
+	   (mode . (help-mode helpful-mode)))
+	  ("\\*Embark Collect:.*"
+	   (display-buffer-in-side-window)
+	   (side . left)
+	   (window-height . 35)
+	   (dedicated . t)
+	   (slot . 1)
+	   (preserve-size t . t))
+	  ("\\*Man.*\\*"
+	   (display-buffer-reuse-mode-window)
+	   (window-width . 80)
+	   (body-function . select-window))))
+
 (use-package golden-ratio
   :disabled t
   :config
@@ -24,70 +48,6 @@
     (require 'winner)
     (winner-save-unconditionally)
     (delete-other-windows))
-
-  (defun nol/display-buffer-pop-up-top-right (buffer alist)
-    "Display BUFFER according to custom window splitting logic.
-
-- If only one window: Split and display BUFFER in the new window.
-- If two windows side by side: Split the right window horizontally, display BUFFER in the new top window.
-- If two windows stacked: Split the top window vertically, display BUFFER in the new right window.
-- Otherwise: Fallback to `display-buffer-use-some-window`."
-    (let* ((windows (window-list))
-           (n (length windows)))
-      (cond
-       ;; Only one window
-       ((= n 1)
-	(let ((newwin (split-window (selected-window) nil
-                                    ;; Prefer vertical split if possible
-                                    (if (> (window-width) (* 2 (window-height))) 'right 'below))))
-          (window--display-buffer buffer newwin 'window alist)))
-
-       ;; Exactly two windows: check arrangement
-       ((= n 2)
-	(let* ((win1 (nth 0 windows))
-               (win2 (nth 1 windows))
-               (edges1 (window-edges win1))
-               (edges2 (window-edges win2)))
-          (if (= (nth 1 edges1) (nth 1 edges2))
-              ;; Side-by-side; choose the RIGHT window to split
-              (let* ((right-win (if (> (nth 0 edges1) (nth 0 edges2)) win1 win2))
-                     (newwin (split-window right-win nil 'below)))
-		(window--display-buffer buffer right-win 'window alist))
-            ;; Stacked; choose the TOP window to split
-            (let* ((top-win (if (< (nth 1 edges1) (nth 1 edges2)) win1 win2))
-                   (newwin (split-window top-win nil 'right)))
-              (window--display-buffer buffer newwin 'window alist)))))
-
-       ;; Fallback
-       (t
-	(display-buffer-use-some-window buffer alist)))))
-
-  (setq display-buffer-alist
-	'(("\\*eshell\\*"
-	   (display-buffer-in-side-window)
-	   (side . bottom)
-	   (window-height . 0.35)
-	   (dedicated . t)
-	   (preserve-size t . t))
-	;; (popper-display-control-p (popper-select-popup-at-bottom))
-	  ("\\*Help\\*\\\|*helpful.*\*"
-	   (display-buffer-reuse-mode-window
-	    nol/display-buffer-pop-up-top-right)
-	   (window-height . shrink-window-if-larger-than-buffer)
-	   (mode . (help-mode helpful-mode)))
-	  ("\\*Embark Collect:.*"
-	   (display-buffer-in-side-window)
-	   (side . left)
-	   (window-height . 35)
-	   (dedicated . t)
-	   (slot . 1)
-	   (preserve-size t . t))
-	  ("\\*Man.*\\*"
-	   (display-buffer-reuse-mode-window
-	    nol/display-buffer-pop-up-top-right)
-	   (body-function . select-window))))
-	   ;; (lambda (buffer alist)
-	   ;;   (let ((window (display-buffer-pop-up-window buffer alist))) (when window (select-window window)))))))
 
   :config
   ;; TODO : fix this. See `split-window-sensibly'. I had to decrease it from 160 to 120 otherwise it would split vertically.

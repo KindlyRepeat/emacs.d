@@ -8,27 +8,27 @@
 :SUMMARY:  Concrete executable tasks. These should be specific enough that you can start without rethinking the project.
 :VISIBILITY: children
 :END:
-** NEXT Setup popper (again)
-+ [ ] Pop a shell (for project ?)
-
-** TODO French thesaurus (synonyms) See inbox.
-https://chatgpt.com/share/6a87b1dc-d364-83ea-9f16-00cdf74b3c9b
-** WAITING Or simply set dictionnary ? Do I really need synonyms ? (waiting for reconfigure for hunspell)
+** NEXT Or simply set dictionnary ? Do I really need synonyms ? (waiting for reconfigure for hunspell)
 - See https://www.masteringemacs.org/article/wordsmithing-in-emacs
 - Voir https://github.com/wooorm/dictionaries#adding-a-new-dictionary
 - Lien vers un dictionnaire français des synonymes: https://www.grammalecte.net/. Voir ~/downloads/thesaurus-v3.0.zip
 - https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries
+- Dictionaires monolingual : see reader.dict
+** TODO Put back the hostname when shell is remote
+See od/set-shell-buffer-name
+** TODO French thesaurus (synonyms) See inbox.
+https://chatgpt.com/share/6a87b1dc-d364-83ea-9f16-00cdf74b3c9b
 ** TODO Setup Jinx (again?)
-** WAITING Setup prism.el (modus configuration)
+** TODO Setup prism.el (modus configuration)
 Waiting for reconfigure.
-** WAITING Use disproject, checking its creator use of it (guix examples)
+** TODO Use disproject, checking its creator use of it (guix examples)
 Waiting for reconfigure.
 ** TODO Is this simple to have agent-shell reply buffer be shown below viewport buffer and make reply buffer disappear when I send the prompt ?
 ** TODO emacs knockknock for notifications ?
 agent-shell could use theme using agent-shell-knockknock (already packaged in my dotfiles) or agent-shell-notifications
 ** TODO Setup ednc for notifications (it shuts up udiskie warnings for example)
-** WAITING Notification when battery is low + another one when critical
-Waiting for reconfigure.
+** TODO Notification when battery is low + another one when critical
+Test if batsignal is working.
 ** TODO Order of init.el.
 + =circadian= need to be loaded early to load modus themes and make =modus-themes-with-colors= available.
 + =exwm= need to be loaded before circadian because of a call to =(nol/set-xsettings-theme)=

@@ -108,48 +108,7 @@
     (if (od/split-horizontal-p (selected-window) od/split-ratio)
 	(split-window-horizontally)
       (split-window-vertically))
-    (other-window 1))
-
-  (defun od/display-buffer-in-side-window (buffer alist)
-    "If the window is higher then it is wide, use a side window on the right. Otherwise use a side window on top. I lan to use this function to display help buffers at a consistent location. `window-height' and `window-width' must be set."
-    (let ((position (if (> (frame-pixel-height) (frame-pixel-width))
-			'top
-		      'right)))
-      (setf (alist-get 'side alist) position)
-      ;; If both `window-height', `window-width' and `(preserve-size . (t . t))' are set, it will prevent the minibuffer from showing up.
-      (if (eq position 'top)
-	  (progn
-	    (assq-delete-all 'window-width alist)
-	    (setf (alist-get 'preserve-size alist) '(nil . t)))
-	(progn
-	  (assq-delete-all 'window-height alist)
-	  (setf (alist-get 'preserve-size alist) '(t . nil)))))
-    (display-buffer-in-side-window buffer alist))
-
-  (defun od/toggle-maximize-buffer ()
-    "Maximize current buffer"
-    (interactive)
-    (if (= 1 (length (window-list)))
-	(jump-to-register '_)
-      (progn
-	(window-configuration-to-register '_)
-	(delete-other-windows))))
-
-  (defun od/nav-toggle-split-direction ()
-    "Toggle window split from vertical to horizontal.
-This work the other way around as well.
-Credit: https://github.com/olivertaylor/dotfiles/blob/master/emacs/init.el"
-    (interactive)
-    (if (> (length (window-list)) 2)
-	(error "Can't toggle with more than 2 windows")
-      (let ((was-full-height (window-full-height-p)))
-	(delete-other-windows)
-	(if was-full-height
-            (split-window-vertically)
-          (split-window-horizontally))
-	(save-selected-window
-          (other-window 1)
-          (switch-to-buffer (other-buffer)))))))
+    (other-window 1)))
 
 (use-package winner
   :bind

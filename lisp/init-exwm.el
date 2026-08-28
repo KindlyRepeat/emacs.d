@@ -2,6 +2,8 @@
 
 (use-package ednc
   :demand t
+  :init
+  (add-to-list 'mode-line-collapse-minor-modes 'ednc-mode)
   :config
   (ednc-mode))
 

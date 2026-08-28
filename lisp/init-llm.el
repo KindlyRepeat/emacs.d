@@ -92,6 +92,7 @@
   :commands (gptel)
   :custom
   (gptel-default-mode 'org-mode)
+  (gptel-display-buffer-action '(display-buffer-same-window))
   (gptel-include-tool-results t)
   (gptel-prompt-prefix-alist '((markdown-mode . "### ")
 			       (org-mode . "* ")

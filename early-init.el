@@ -11,8 +11,8 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(setq auto-window-vscroll nil
-      inhibit-startup-screen t)
+
+(setq inhibit-startup-screen t)
 
 ;; Package-initialize occurs automatically before use-init-file, but after early-init-file
 (setq package-enable-at-startup nil)

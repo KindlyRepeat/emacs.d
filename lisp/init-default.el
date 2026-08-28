@@ -319,10 +319,11 @@
 
 (use-package isearch
   :commands (isearch)
-  :config
-  (setq isearch-lazy-count t
-	;; For "a" to match "a", "à" and "â".
-	search-default-mode 'char-fold-to-regexp))
+  :custom
+  (isearch-allow-scroll t)
+  (isearch-lazy-count t)
+  ;; For "a" to match "a", "à" and "â".
+  (search-default-mode 'char-fold-to-regexp))
 
 (use-package lisp
   :bind (("M-\"" . insert-double-quotes))

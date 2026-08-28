@@ -112,6 +112,12 @@
 	enable-recursive-minibuffers t
 	load-prefer-newer t
 	ring-bell-function 'flash-face-bell-function
+	auto-window-vscroll nil
+	fast-but-imprecise-scrolling t
+	hscroll-margin 2
+	hscroll-step 1
+	scroll-conservatively 20
+	scroll-margin 3
 	scroll-preserve-screen-position t
 	window-resize-pixelwise t
 	;; Try really hard to keep the cursor from getting stuck in the read-only prompt

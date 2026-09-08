@@ -14,6 +14,7 @@
 - Lien vers un dictionnaire français des synonymes: https://www.grammalecte.net/. Voir ~/downloads/thesaurus-v3.0.zip
 - https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries
 - Dictionaires monolingual : see reader.dict
+** Speed up consult https://www.jamescherti.com/emacs-consult-speed-async-searche-grep-ripgrep-fd-find/
 ** TODO Put back the hostname when shell is remote
 See od/set-shell-buffer-name
 ** TODO French thesaurus (synonyms) See inbox.

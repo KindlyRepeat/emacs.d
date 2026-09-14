@@ -14,20 +14,35 @@
 - Lien vers un dictionnaire français des synonymes: https://www.grammalecte.net/. Voir ~/downloads/thesaurus-v3.0.zip
 - https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries
 - Dictionaires monolingual : see reader.dict
-** Speed up consult https://www.jamescherti.com/emacs-consult-speed-async-searche-grep-ripgrep-fd-find/
+- dictd --force --port 2628 --locale C -c /home/nic/tmp/dictd.conf -L /home/nic/tmp/dictd.log -v
+*** TODO Create a shepherd service
+*** TODO Guix packages for french and english dictionaries
+** TODO Speed up consult https://www.jamescherti.com/emacs-consult-speed-async-searche-grep-ripgrep-fd-find/
 ** TODO Put back the hostname when shell is remote
-See od/set-shell-buffer-name
-** TODO French thesaurus (synonyms) See inbox.
-https://chatgpt.com/share/6a87b1dc-d364-83ea-9f16-00cdf74b3c9b
+:PROPERTIES:
+:AGENT:    autonomous
+:END:
+See od/set-shell-buffer-name.
+** TODO Expose the LibreOffice French thesaurus through local dictd
+Use LibreOffice’s French MyThes data, =thes_fr.dat= (Dicollecte/Grammalecte
+v2.3, LGPL-2.1-or-later):
+https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries
+- Parse the UTF-8 MyThes entries into DICT records, retaining categories and
+  senses.
+- Generate =fr-thesaurus.dict= and =fr-thesaurus.index= with
+  =dictfmt --utf8=, then compress the data with =dictzip=.
+- Package the generated database with Guix and register it as
+  =fr-thesaurus= in the local =dictd= configuration/Shepherd service.
+- Configure Emacs’s built-in =dictionary= client to query the local server and
+  select =fr-thesaurus= for synonym lookups.
+- Verify accented-word, ordinary-word, and missing-entry lookups offline.
+*** SOMEDAY Publish it to github and to Guix ?
 ** TODO Setup Jinx (again?)
-** TODO Setup prism.el (modus configuration)
-Waiting for reconfigure.
 ** TODO Use disproject, checking its creator use of it (guix examples)
 Waiting for reconfigure.
 ** TODO Is this simple to have agent-shell reply buffer be shown below viewport buffer and make reply buffer disappear when I send the prompt ?
 ** TODO emacs knockknock for notifications ?
 agent-shell could use theme using agent-shell-knockknock (already packaged in my dotfiles) or agent-shell-notifications
-** TODO Setup ednc for notifications (it shuts up udiskie warnings for example)
 ** TODO Notification when battery is low + another one when critical
 Test if batsignal is working.
 ** TODO Order of init.el.
@@ -42,6 +57,7 @@ Try something like
           "/run/current-system/profile/lib/tree-sitter"))
 #+end_src
 ** TODO Package shrface and use it !
+** TODO Setup emacs-epithet (add it for dictionary ?)
 ** WAITING Try project-x
 Waiting for reconfigure
 * Open questions

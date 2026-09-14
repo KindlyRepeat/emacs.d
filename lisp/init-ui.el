@@ -356,10 +356,11 @@ Optionally, change the size of VARIABLE-FACE fonts according to VARIABLE-FACTOR.
   :demand t
   :hook ((dired-mode . (lambda ()
 			 (unless (file-remote-p dired-directory)
-			   (nerd-icons-dired-mode))))))
+			   (nerd-icons-dired-mode)))))
+  :init
+  (add-to-list 'mode-line-collapse-minor-modes 'nerd-icons-dired-mode))
 
 (use-package prism
-  :disabled t
   :demand t
   :after modus-themes
   :hook
@@ -371,29 +372,17 @@ Optionally, change the size of VARIABLE-FACE fonts according to VARIABLE-FACTOR.
 				      :desaturations '(0) ; do not change---may lower the contrast ratio
 				      :lightens '(0)      ; same
 				      :colors (modus-themes-with-colors
-						(list fg-main
+						(list blue
 						      magenta
-						      cyan-alt-other
-						      magenta-alt-other
-						      blue
-						      magenta-alt
-						      cyan-alt
-						      red-alt-other
-						      green
+						      magenta-cooler
+						      cyan-cooler
 						      fg-main
-						      cyan
-						      yellow
-						      blue-alt
-						      red-alt
-						      green-alt-other
-						      fg-special-warm))
-				      :parens-fn #'(lambda (color)
-						     (prism-blend color
-								  (face-attribute 'default :background)
-								  0.25))))))
+						      blue-warmer
+						      red-cooler
+						      cyan))))))
   :config
-  (setq prism-num-faces 16
-	prism-parens t))
+  (setq prism-num-faces 8
+	prism-parens nil))
 
 (use-package shrface
   :disabled t

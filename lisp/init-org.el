@@ -21,6 +21,7 @@
 	 ("C-c C-n" . nol/org-next-heading-at-top)))
   :custom
   (org-fontify-whole-heading-line t)
+  (org-startup-folded 'fold)
   :init
   (defun insert-tilde (&optional arg)
     "Enclose following ARG sexps or region in tildes (~).

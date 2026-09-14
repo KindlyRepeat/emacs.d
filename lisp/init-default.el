@@ -125,6 +125,12 @@
   (setq desktop-restore-frames t)
   (desktop-save-mode 1))
 
+(use-package dictionary
+  :custom
+  (dictionary-create-buttons nil)
+  (dictionary-word-definition-face 'variable-pitch)
+  (dictionary-word-entry-face 'modus-themes-heading-1))
+
 (use-package ediff-diff
   :custom
   (ediff-diff-options "-w")
@@ -162,6 +168,7 @@
 (use-package files
   :bind ("C-x f" . find-file)
   :custom
+  (enable-local-variables :safe)
   (trash-directory "~/.config/emacs/trash"))
 
 (use-package find-func
@@ -325,6 +332,11 @@
   ;; For "a" to match "a", "à" and "â".
   (search-default-mode 'char-fold-to-regexp))
 
+(use-package ispell
+  :custom
+  (ispell-dictionary "en_US")
+  (ispell-program-name (executable-find "hunspell")))
+
 (use-package lisp
   :bind (("M-\"" . insert-double-quotes))
   :init
@@ -403,7 +415,9 @@ No argument inserts a pair of quotes and leaves point between them."
 
 (use-package saveplace
   :config
-  (save-place-mode 1))
+  ;; Messes up the org startup visibility. If the point is inside a heading, it
+  ;; shows as unfolded even if I've set `org-startup-folded' to `folded'.
+  (save-place-mode -1))
 
 (use-package scheme
   :config

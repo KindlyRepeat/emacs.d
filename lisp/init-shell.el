@@ -104,7 +104,8 @@ to the location when the bookmark was created."
 	      (generate-new-buffer-name (od/shell-buffer-name default-directory)))
 	    (cadr args))))
 
-  (advice-add #'shell :filter-args #'od/set-shell-buffer-name))
+  ;; (advice-add #'shell :filter-args #'od/set-shell-buffer-name)
+  )
 
 (use-package shell-command-x
   :after (comint shell)

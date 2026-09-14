@@ -324,15 +324,16 @@ With prefix ARG, undedicate it."
 
   (defun awesome-tray-module-network-info ()
     "Show WiFi only when disconnected or below `awesome-tray-network-bitrate-threshold'."
-    (let* ((interface (awesome-tray--wifi-interface))
+    (let* ((default-directory (getenv "HOME"))
+           (interface (awesome-tray--wifi-interface))
            (ssid (string-trim (shell-command-to-string "iwgetid -r 2>/dev/null"))))
       (cond
        ((string-empty-p ssid)
-        "WiFi:down")
+	"WiFi:down")
        (interface
-        (let* ((link-output
-                (shell-command-to-string
-                 (format "iw dev %s link 2>/dev/null" (shell-quote-argument interface))))
+	(let* ((link-output
+		(shell-command-to-string
+		 (format "iw dev %s link 2>/dev/null" (shell-quote-argument interface))))
                (tx-bitrate (awesome-tray--wifi-tx-bitrate link-output)))
           (if (and tx-bitrate
                    (< tx-bitrate awesome-tray-network-bitrate-threshold))
@@ -659,6 +660,18 @@ With prefix ARG, undedicate it."
 	awesome-tray-active-modules '(;; "nextcloud"
 				      "disk-info" "ram-info" "cpu" "network"
 				      "volume" "battery" "pretty-date" "guix-icon"))
+
+  (defun nol/awesome-tray-update-safely (update &rest args)
+    "Prevent transient errors from wedging awesome-tray's timer."
+    (condition-case err
+        (apply update args)
+      (error
+       (message "awesome-tray update failed: %S" err)
+       nil)))
+
+  (advice-add #'awesome-tray-update
+              :around #'nol/awesome-tray-update-safely)
+
   (awesome-tray-mode 1))
 
 (use-package burly

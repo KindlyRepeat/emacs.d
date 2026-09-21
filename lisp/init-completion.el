@@ -21,10 +21,14 @@
    ("M-r" . consult-history)
    :map minibuffer-local-map
    ("M-r" . consult-history))
+  :custom
+  (consult-async-input-debounce 0.1)
+  (consult-async-input-throttle 0.1)
+  (consult-async-min-input 2)
+  (consult-async-refresh-delay 0.05)
+  (consult-narrow-key "<")
+  (consult-preview-key 'any)		; This is great when using `completion-at-point'
   :config
-  (setq consult-async-min-input 2
-	consult-narrow-key "<"
-	consult-preview-key 'any)	; This is great when using `completion-at-point'
 
   (setq default-consult-ripgrep-args consult-ripgrep-args
 	consult-ripgrep-args (concat default-consult-ripgrep-args " --hidden"))

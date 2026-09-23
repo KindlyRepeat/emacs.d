@@ -32,6 +32,9 @@ Acceptance criteria: Calling project-shell repeatedly must reuse the same projec
   The remote user@host must appear in its stable buffer name.
   nol/popper-toggle-project-shell must continue to find and toggle that buffer.
 ** TODO Expose the LibreOffice French thesaurus through local dictd
+Conversion script and tests are on branch =bot/fr-thesaurus-converter= (see
+=scripts/build-fr-thesaurus.py=); the DICT build and remaining integration
+steps still need to be run/completed.
 Use LibreOffice’s French MyThes data, =thes_fr.dat= (Dicollecte/Grammalecte
 v2.3, LGPL-2.1-or-later):
 https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries

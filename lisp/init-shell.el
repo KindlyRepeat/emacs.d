@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'cl-lib)
+
 (use-package eat
   :disabled t
   :hook ((eshell-load . eat-eshell-mode)
@@ -96,6 +98,32 @@ to the location when the bookmark was created."
 	      (concat (user-login-name) "@" (system-name)))
 	    "*"))
 
+  (defun od/project-shell-buffer-name (&optional directory)
+    "Return the stable project shell name for DIRECTORY.
+Include the remote user and host when DIRECTORY is a TRAMP path."
+    (let ((default-directory (or directory default-directory)))
+      (project-prefixed-buffer-name
+       (if (tramp-tramp-file-p default-directory)
+	   (with-parsed-tramp-file-name default-directory file
+	     (format "shell - %s@%s"
+		     (or file-user (user-login-name)) file-host))
+	 "shell"))))
+
+  (defun od/project-shell-with-remote-hostname (project-shell &rest args)
+    "Call PROJECT-SHELL with a stable, host-qualified remote buffer name."
+    (let* ((project-prefixed-buffer-name-original
+	    (symbol-function 'project-prefixed-buffer-name))
+	   (remote-shell-name
+	    (when (tramp-tramp-file-p default-directory)
+	      (od/project-shell-buffer-name
+	       (project-root (project-current t))))))
+      (cl-letf (((symbol-function 'project-prefixed-buffer-name)
+		 (lambda (name)
+		   (if (and (equal name "shell") remote-shell-name)
+		       remote-shell-name
+		     (funcall project-prefixed-buffer-name-original name)))))
+	(apply project-shell args))))
+
   (defun od/set-shell-buffer-name (args)
     "Force the BUFFER argument of `shell' to include host and user name."
     (let ((shell-process (get-buffer-process (current-buffer))))
@@ -105,6 +133,7 @@ to the location when the bookmark was created."
 	    (cadr args))))
 
   ;; (advice-add #'shell :filter-args #'od/set-shell-buffer-name)
+  (advice-add #'project-shell :around #'od/project-shell-with-remote-hostname)
   )
 
 (use-package shell-command-x

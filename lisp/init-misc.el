@@ -1142,6 +1142,7 @@ With prefix ARG, undedicate it."
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
+;; TODO: Shouldn't this be split between `pass' and `password-store' ?
 (use-package pass
   :bind
   (("s-s p w" . password-store-copy)
@@ -1178,7 +1179,7 @@ With prefix ARG, undedicate it."
   (defun nol/project-shell-buffer ()
     "Return the default shell buffer for the current project, or nil."
     (let* ((default-directory (project-root (project-current t)))
-           (name (project-prefixed-buffer-name "shell")))
+           (name (od/project-shell-buffer-name default-directory)))
       (get-buffer name)))
 
   (defun nol/popper-display-buffer (buf)

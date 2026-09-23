@@ -20,8 +20,17 @@
 ** TODO Put back the hostname when shell is remote
 :PROPERTIES:
 :AGENT:    autonomous
+:ID: put-back-the-hostname-when-shell-is-remote
+:AGENT_RUN_ID: 20260914T034949611161Z-put-back-the-hostname-when-shell-is-remote
+:AGENT_CLAIMED_AT: 2026-09-14T03:49:49.643634Z
+:AGENT_BASE: f4eebd780a482146f4df9ab4709346a0bb5596dc
+:AGENT_RESULT: REVIEW
+:AGENT_FINISHED_AT: 2026-09-14T03:51:54.551545Z
 :END:
 See od/set-shell-buffer-name.
+Acceptance criteria: Calling project-shell repeatedly must reuse the same project shell buffer.
+  The remote user@host must appear in its stable buffer name.
+  nol/popper-toggle-project-shell must continue to find and toggle that buffer.
 ** TODO Expose the LibreOffice French thesaurus through local dictd
 Use LibreOffice’s French MyThes data, =thes_fr.dat= (Dicollecte/Grammalecte
 v2.3, LGPL-2.1-or-later):
@@ -76,4 +85,22 @@ Waiting for reconfigure
 * References
 :PROPERTIES:
 :SUMMARY:  Related files, documentation, external resources, and links needed to work on the project.
+:END:
+
+* Archive
+
+** DONE REVIEW Speed up consult https://www.jamescherti.com/emacs-consult-speed-async-searche-grep-ripgrep-fd-find/
+:PROPERTIES:
+:AGENT:    autonomous
+:ID: speed-up-consult-https-www-jamescherti-com-emacs-consult-speed-async-searche-grep-ripgrep-fd-find
+:AGENT_RUN_ID: 20260914T032912095986Z-speed-up-consult-https-www-jamescherti-com-emacs-consult-speed-async-searche-grep-ripgrep-fd-find
+:AGENT_CLAIMED_AT: 2026-09-14T03:29:12.117175Z
+:AGENT_BASE: f4eebd780a482146f4df9ab4709346a0bb5596dc
+:AGENT_RESULT: REVIEW
+:AGENT_FINISHED_AT: 2026-09-14T03:29:52.831088Z
+:ARCHIVE_TIME: 2026-09-13 Sun 23:39
+:ARCHIVE_FILE: ~/.emacs.d/PROJECT.org
+:ARCHIVE_OLPATH: Actions
+:ARCHIVE_CATEGORY: PROJECT
+:ARCHIVE_TODO: DONE
 :END:

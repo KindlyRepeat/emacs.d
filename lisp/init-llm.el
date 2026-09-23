@@ -110,6 +110,34 @@
       (with-selected-window
           (display-buffer (gptel session nil query))
 	(gptel-send))))
+
+  (defun nol/gptel-new (&optional name)
+    "Kill the current gptel request/buffer and start a fresh chat.
+
+The new chat buffer is shown in the same window as the old one."
+    (interactive
+     (let* ((backend (default-value 'gptel-backend))
+            (default-name
+             (if (and (boundp 'gptel-mode) gptel-mode)
+		 (buffer-name)
+               (format "*%s*" (if backend (gptel-backend-name backend) "gptel")))))
+       (list (read-buffer "Create fresh gptel buffer: " default-name))))
+    (let* ((window (selected-window))
+           (old-buffer (current-buffer))
+           (new-name (or name (buffer-name old-buffer))))
+      (when (and (boundp 'gptel-mode) gptel-mode)
+	(when (and (fboundp 'gptel-abort)
+                   (or (and (boundp 'gptel--fsm-last) gptel--fsm-last)
+                       (and (boundp 'gptel--request-alist) gptel--request-alist)))
+          (ignore-errors (gptel-abort)))
+	(let ((kill-buffer-query-functions nil))
+          (set-buffer-modified-p nil)
+          (kill-buffer old-buffer)))
+      (let ((new-buffer (gptel new-name nil nil nil)))
+	(when (window-live-p window)
+          (set-window-buffer window new-buffer)
+          (select-window window))
+	new-buffer)))
   :config
   ;; (setq gptel-model 'gpt-5.5)
   ;; (setq gptel-backend (gptel-make-openai-oauth "OpenAI Codex"))

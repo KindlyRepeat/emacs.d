@@ -57,7 +57,6 @@ Try something like
           "/run/current-system/profile/lib/tree-sitter"))
 #+end_src
 ** TODO Package shrface and use it !
-** TODO Setup emacs-epithet (add it for dictionary ?)
 ** WAITING Try project-x
 Waiting for reconfigure
 * Open questions

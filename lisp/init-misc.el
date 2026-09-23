@@ -772,6 +772,17 @@ With prefix ARG, undedicate it."
   :config
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
+;; TODO: Maybe set for *Dictionary*
+(use-package epithet
+  :hook ((Info-selection . epithet-rename-buffer)
+	 (eww-after-render . epithet-rename-buffer)
+	 (help-mode . epithet-rename-buffer)
+	 (occur . epithet-rename-buffer)
+	 (shell-mode . epithet-rename-buffer) ; TODO: Can it replace shell-command-x ?
+	 (compilation-start-hook . epithet-rename-buffer-ignoring-arguments)
+	 (compilation-finish-functions . epithet-rename-buffer-ignoring-arguments)
+	 (vterm-hook . epither-rename-buffer)))
+
 (use-package expand-region
   :bind (("C-M-SPC" . er/expand-region)))
 

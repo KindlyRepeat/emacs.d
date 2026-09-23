@@ -17,7 +17,6 @@
 - dictd --force --port 2628 --locale C -c /home/nic/tmp/dictd.conf -L /home/nic/tmp/dictd.log -v
 *** TODO Create a shepherd service
 *** TODO Guix packages for french and english dictionaries
-** TODO Speed up consult https://www.jamescherti.com/emacs-consult-speed-async-searche-grep-ripgrep-fd-find/
 ** TODO Put back the hostname when shell is remote
 :PROPERTIES:
 :AGENT:    autonomous

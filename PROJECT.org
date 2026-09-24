@@ -64,6 +64,23 @@ Try something like
           "~/.guix-home/profile/lib/tree-sitter"
           "/run/current-system/profile/lib/tree-sitter"))
 #+end_src
+** TODO Try flyover inline diagnostics (konrad1977/flyover)
+Source: https://github.com/konrad1977/flyover#installation
+Install =flyover= through the chosen package source, then try this minimal
+configuration in =lisp/init-prog.el= (adapt the hooks to whichever checker is
+actually enabled):
+#+begin_src elisp
+(use-package flyover
+  :hook ((flymake-mode . flyover-mode)
+         (flycheck-mode . flyover-mode))
+  :custom
+  (flyover-checkers '(flymake flycheck))
+  (flyover-levels '(error warning info))
+  (flyover-use-theme-colors t))
+#+end_src
+Compare the inline overlays with the existing diagnostics display and keep or
+remove the configuration based on readability. This is a proposal, not an
+installed or tested configuration.
 ** TODO Package shrface and use it !
 ** WAITING Try project-x
 Waiting for reconfigure

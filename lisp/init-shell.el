@@ -75,7 +75,33 @@ directory to make multiple eshell windows easier."
   :hook (shell-mode . (lambda ()
 			(setq-local bookmark-make-record-function
 				    #'shell-bookmark--make-record)))
+  :custom
+  (comint-use-prompt-regexp t)
   :init
+  (defun my-shell-highlight-multiline-prompt (_string)
+    "Highlight a two-line Bash prompt in `shell-mode'."
+    (when-let ((proc (get-buffer-process (current-buffer))))
+      (let ((start comint-last-output-start)
+            (end (process-mark proc))
+            (inhibit-read-only t)
+            beg match-end)
+	(when (and start end)
+          (save-excursion
+            (goto-char start)
+            ;; Match prompt inside the latest process output only.
+            (while (re-search-forward
+                    "^[^ \n]+@[^ \n]+ [^\n]*\n[$#] "
+                    end t)
+              (setq beg (match-beginning 0)
+                    match-end (match-end 0)))
+
+            ;; Only face it if the prompt reaches process-mark.
+            (when (and beg (= match-end (marker-position end)))
+              (font-lock-append-text-property
+               beg match-end
+               'font-lock-face
+               'comint-highlight-prompt)))))))
+
   (defun shell-bookmark--make-record ()
     "Create a shell bookmark.
 The bookmark will try to open a shell session with the pwd set
@@ -134,6 +160,25 @@ Include the remote user and host when DIRECTORY is a TRAMP path."
 
   ;; (advice-add #'shell :filter-args #'od/set-shell-buffer-name)
   (advice-add #'project-shell :around #'od/project-shell-with-remote-hostname)
+  :config
+  (add-hook 'shell-mode-hook
+            (lambda ()
+              ;; Directory tracking via OSC 7.
+              (add-hook 'comint-output-filter-functions
+			#'comint-osc-process-output
+			nil
+			t)
+
+              ;; Important: append t, so this runs after OSC handling.
+              (add-hook 'comint-output-filter-functions
+			#'my-shell-highlight-multiline-prompt
+			t
+			t)))
+
+  (add-hook 'shell-mode-hook
+          '(lambda ()
+             (setq-local comint-prompt-regexp
+                         "^[^ \n]+@[^ \n]+ [^\n]*\n[$#] ")))
   )
 
 (use-package shell-command-x

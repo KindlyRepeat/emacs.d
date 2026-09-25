@@ -83,6 +83,7 @@
   :custom
   (compilation-scroll-output t)
   :config
+  (require 'nol-compilation-diagnosis)
   ;; Force the `COMINT' argument of `compile' as `t'. Without this argument, we can't
   ;; use `sudo' commands as it won't prompt us for a password.
   (defun od/compile-force-comint (r)

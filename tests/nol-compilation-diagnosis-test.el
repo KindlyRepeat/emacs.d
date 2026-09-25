@@ -1,4 +1,5 @@
 ;;; nol-compilation-diagnosis-test.el --- Prototype tests -*- lexical-binding: t; -*-
+
 (require 'ert)
 (require 'cl-lib)
 (require 'compile)

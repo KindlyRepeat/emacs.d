@@ -12,12 +12,16 @@
   (when (buffer-live-p buffer)
     (with-current-buffer buffer
       (setq nol/compilation-diagnosis-failed
-            (and (stringp status) (string-match-p "exited abnormally" status)))
+            (and (stringp status)
+                 (string-match-p "exited abnormally" status)))
       (when nol/compilation-diagnosis-failed
-        (let ((inhibit-read-only t))
-          (save-excursion
-            (goto-char (point-max))
-            (insert "\nUse C-c C-d to invoke LLM to diagnose this error.\n")))))))
+        (let ((key
+               (read-key
+                (format "Compilation failed. Press %s to invoke LLM diagnosis; any other key dismisses this message."
+                        (propertize "RET" 'face 'help-key-binding)))))
+          (message nil)
+          (when (memq key '(return kp-enter ?\n ?\r))
+            (call-interactively #'nol/compilation-diagnose)))))))
 
 (defun nol/compilation-diagnosis--path (root path kind)
   "Resolve PATH inside ROOT, requiring KIND to be `file' or `directory'."
@@ -65,7 +69,8 @@
 (defun nol/compilation-diagnose ()
   "Immediately diagnose this failed compilation with project-scoped gptel tools."
   (interactive)
-  (unless (derived-mode-p 'compilation-mode)
+  (unless (or (derived-mode-p 'compilation-mode)
+	      (member 'compilation-shell-minor-mode local-minor-modes))
     (user-error "Run this from a compilation buffer"))
   (unless nol/compilation-diagnosis-failed
     (user-error "This compilation did not fail"))
@@ -87,7 +92,7 @@
         (gptel-send))
       (display-buffer chat))))
 
-(define-key compilation-mode-map (kbd "C-c C-d") #'nol/compilation-diagnose)
+(define-key compilation-shell-minor-mode-map (kbd "C-c C-d") #'nol/compilation-diagnose)
 (add-hook 'compilation-finish-functions #'nol/compilation-diagnosis-finish)
 
 (provide 'nol-compilation-diagnosis)

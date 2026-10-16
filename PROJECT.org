@@ -48,11 +48,8 @@ https://github.com/LibreOffice/dictionaries/tree/master/fr_FR/dictionaries
 ** TODO Setup Jinx (again?)
 ** TODO Use disproject, checking its creator use of it (guix examples)
 Waiting for reconfigure.
-** TODO Is this simple to have agent-shell reply buffer be shown below viewport buffer and make reply buffer disappear when I send the prompt ?
 ** TODO emacs knockknock for notifications ?
 agent-shell could use theme using agent-shell-knockknock (already packaged in my dotfiles) or agent-shell-notifications
-** TODO Notification when battery is low + another one when critical
-Test if batsignal is working.
 ** TODO Order of init.el.
 + =circadian= need to be loaded early to load modus themes and make =modus-themes-with-colors= available.
 + =exwm= need to be loaded before circadian because of a call to =(nol/set-xsettings-theme)=

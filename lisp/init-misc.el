@@ -1248,7 +1248,9 @@ If it does not exist, call `project-shell'."
   :bind
   (:map vterm-mode-map
 	(("C-y" . vterm-yank)
-	 ("C-v" . vterm-yank)))
+	 ("C-v" . vterm-yank)
+	 ("M-p" . vterm-send-up)
+	 ("M-n" . vterm-send-down)))
   :config
   ;; To be used as `xdg-launcher-terminal-function'.
   (defun vterm-make-term (name program &optional startfile &rest switches)

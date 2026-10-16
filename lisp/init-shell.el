@@ -78,30 +78,6 @@ directory to make multiple eshell windows easier."
   :custom
   (comint-use-prompt-regexp t)
   :init
-  (defun my-shell-highlight-multiline-prompt (_string)
-    "Highlight a two-line Bash prompt in `shell-mode'."
-    (when-let ((proc (get-buffer-process (current-buffer))))
-      (let ((start comint-last-output-start)
-            (end (process-mark proc))
-            (inhibit-read-only t)
-            beg match-end)
-	(when (and start end)
-          (save-excursion
-            (goto-char start)
-            ;; Match prompt inside the latest process output only.
-            (while (re-search-forward
-                    "^[^ \n]+@[^ \n]+ [^\n]*\n[$#] "
-                    end t)
-              (setq beg (match-beginning 0)
-                    match-end (match-end 0)))
-
-            ;; Only face it if the prompt reaches process-mark.
-            (when (and beg (= match-end (marker-position end)))
-              (font-lock-append-text-property
-               beg match-end
-               'font-lock-face
-               'comint-highlight-prompt)))))))
-
   (defun shell-bookmark--make-record ()
     "Create a shell bookmark.
 The bookmark will try to open a shell session with the pwd set
@@ -161,25 +137,28 @@ Include the remote user and host when DIRECTORY is a TRAMP path."
   ;; (advice-add #'shell :filter-args #'od/set-shell-buffer-name)
   (advice-add #'project-shell :around #'od/project-shell-with-remote-hostname)
   :config
+  ;; Share vterm's theme-controlled ANSI palette, including bright colors.
+  ;; Face symbols keep following theme changes without copying RGB values.
+  (require 'ansi-color)
+  (require 'term)
+  (setq ansi-color-normal-colors-vector
+        [term-color-black term-color-red term-color-green term-color-yellow
+         term-color-blue term-color-magenta term-color-cyan term-color-white]
+        ansi-color-bright-colors-vector
+        [term-color-bright-black term-color-bright-red term-color-bright-green
+         term-color-bright-yellow term-color-bright-blue term-color-bright-magenta
+         term-color-bright-cyan term-color-bright-white])
+  (defun od/shell-tracking-and-colors ()
+    "Use OSC 7 tracking and preserve Bash's ANSI prompt colors."
+    (shell-dirtrack-mode -1)
+    (ansi-color-for-comint-mode-on)
+    (setq-local comint-highlight-prompt nil)
+    (add-hook 'comint-output-filter-functions #'comint-osc-process-output nil t))
+  (add-hook 'shell-mode-hook #'od/shell-tracking-and-colors)
   (add-hook 'shell-mode-hook
             (lambda ()
-              ;; Directory tracking via OSC 7.
-              (add-hook 'comint-output-filter-functions
-			#'comint-osc-process-output
-			nil
-			t)
-
-              ;; Important: append t, so this runs after OSC handling.
-              (add-hook 'comint-output-filter-functions
-			#'my-shell-highlight-multiline-prompt
-			t
-			t)))
-
-  (add-hook 'shell-mode-hook
-          '(lambda ()
-             (setq-local comint-prompt-regexp
-                         "^[^ \n]+@[^ \n]+ [^\n]*\n[$#] ")))
-  )
+              (setq-local comint-prompt-regexp
+                          "^[^ \n]+@[^ \n]+ [^\n]*\n[$#] "))))
 
 (use-package shell-command-x
   :after (comint shell)
